@@ -102,3 +102,4 @@ Commit 100: feat(redaction): implement dynamic visual blurring for image regions
 Commit 101: chore(arch): refactor component communication interfaces #9086
 Commit 102: test(vision): benchmark new segmentation architecture #2069
 Commit 103: feat(client): add settings panel for user preferences #6330
+Commit 104: refactor(prompt): modularize prompt templates by task type #4884
