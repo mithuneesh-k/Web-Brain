@@ -50,3 +50,4 @@ Commit 48: fix(edge): resolve OOM errors on low-memory devices #8947
 Commit 49: fix(edge): resolve OOM errors on low-memory devices #9434
 Commit 50: refactor(extension): decouple content script from background logic #1744
 Commit 51: fix(privacy): prevent leak of credentials in crash reports #1169
+Commit 52: fix(redaction): ensure robust DOM node replacement for sensitive data #5093
