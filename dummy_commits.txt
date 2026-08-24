@@ -3,3 +3,4 @@ Commit 1: feat(extension): implement background service worker for state sync #2
 Commit 2: feat(arch): introduce unified event bus for modularity #3871
 Commit 3: feat(ai): integrate lightweight object detection model #3131
 Commit 4: feat(orchestration): implement fallback mechanism for API timeouts #4058
+Commit 5: perf(edge): reduce latency in frame processing pipeline #6437
