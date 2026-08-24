@@ -94,3 +94,4 @@ Commit 92: refactor(prompt): modularize prompt templates by task type #3562
 Commit 93: perf(client): lazy load heavy UI components #5000
 Commit 94: feat(prompt): refine zero-shot extraction prompt for better accuracy #7850
 Commit 95: refactor(privacy): isolate sanitization logic into pure functions #9522
+Commit 96: fix(prompt): mitigate hallucination in structured JSON parsing #5077
