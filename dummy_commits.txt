@@ -85,3 +85,4 @@ Commit 83: feat(redaction): implement dynamic visual blurring for image regions 
 Commit 84: feat(execution): implement robust retry mechanism for stale elements #9601
 Commit 85: test(extension): add e2e tests for core extension workflows #9849
 Commit 86: refactor(execution): streamline action queuing system #4773
+Commit 87: feat(client): add settings panel for user preferences #8016
