@@ -91,3 +91,4 @@ Commit 89: perf(edge): reduce latency in frame processing pipeline #5137
 Commit 90: perf(edge): reduce latency in frame processing pipeline #7895
 Commit 91: chore(automation): update playwright dependencies #3795
 Commit 92: test(extension): add e2e tests for core extension workflows #4278
+Commit 93: feat(client): implement visual feedback for capture actions #9795
