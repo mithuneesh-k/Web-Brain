@@ -96,3 +96,4 @@ Commit 94: feat(prompt): refine zero-shot extraction prompt for better accuracy 
 Commit 95: refactor(privacy): isolate sanitization logic into pure functions #9522
 Commit 96: fix(prompt): mitigate hallucination in structured JSON parsing #5077
 Commit 97: fix(browser): handle shadow DOM boundaries correctly #6523
+Commit 98: feat(arch): introduce unified event bus for modularity #2468
