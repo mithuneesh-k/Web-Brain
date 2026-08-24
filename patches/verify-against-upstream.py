@@ -23,12 +23,18 @@ FILES = [
     "src/chrome/src/background.js",
     "src/firefox/src/agent/agent.js",
     "src/firefox/src/background.js",
+    "src/chrome/src/providers/manager.js",
+    "src/firefox/src/providers/manager.js",
 ]
 
 # What must be true AFTER the series is applied.
 EXPECTED = [
     ("src/chrome/src/agent/agent.js", "this.screenshotRedaction = true;"),
     ("src/firefox/src/agent/agent.js", "this.screenshotRedaction = true;"),
+    ("src/chrome/src/providers/manager.js", "wrapProviderWithPrivacyGate(ozerRawProvider"),
+    ("src/firefox/src/providers/manager.js", "wrapProviderWithPrivacyGate(ozerRawProvider"),
+    ("src/chrome/src/providers/manager.js", "_createRawProvider(normalizedConfig)"),
+    ("src/firefox/src/providers/manager.js", "_createRawProvider(normalizedConfig)"),
 ]
 # What must NOT survive.
 FORBIDDEN = [

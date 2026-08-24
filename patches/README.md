@@ -47,6 +47,51 @@ collector cannot inspect, rather than silently sending an unredacted
 image. That is the correct trade — but it is a visible UX change, not a
 free win, and users will encounter it.
 
+### `0002-gate-provider-construction.patch`
+
+Wraps every provider constructed by `ProviderManager._createProvider()`
+in Ozer's privacy gate, in both browsers.
+
+**Why here.** Phase 12D traced the provider-bound text path and found
+129 message-construction sites, 3 dispatch sites, and — decisively —
+that the **main streaming path bypasses its own
+`_chatStreamWithCostAllowance` wrapper**, calling `provider.chatStream`
+directly. The provider object is the only seam every path must cross,
+and this factory is where all eight types are built. Wrapping here makes
+the invariant structural: *no provider can receive a message without
+passing Ozer's policy.*
+
+**Why after the switch, not per `case`.** A ninth provider type added
+upstream is then gated automatically. Eight per-case wraps would leave
+the ninth silently ungated — enforced by test.
+
+**No try/catch.** If gating cannot be applied, construction throws. A
+`catch → return raw provider` fallback would recreate threat T17 at the
+provider layer. Also enforced by test.
+
+**This patch contains no policy.** It imports `ozerTextPolicy()`, which
+currently returns a placeholder that allows everything. Text policy —
+detection, provenance, and intent — is decided separately.
+
+## Installing Ozer's modules (required by 0002)
+
+Patch 0002 imports from `../ozer/`, so Ozer's privacy modules must be
+copied into each extension tree before the patched build will load:
+
+```bash
+# from the WebBrain checkout, with OZER=/path/to/Ozer
+for B in chrome firefox; do
+  mkdir -p "src/$B/src/ozer"
+  cp "$OZER"/extension/src/privacy/providerGate.js  "src/$B/src/ozer/"
+  cp "$OZER"/extension/src/privacy/textPolicy.js    "src/$B/src/ozer/"
+done
+```
+
+Ozer's modules are dual-environment (CommonJS for `node --test`, plain
+globals otherwise); the ESM `import` in the patch expects the extension
+build to treat them as modules. **Not yet validated in a real extension
+load** — see the limitation note below.
+
 ## Verifying
 
 Offline, on every commit (structural guard — scope, size, attribution,

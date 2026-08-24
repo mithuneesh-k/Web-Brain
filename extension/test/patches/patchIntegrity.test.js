@@ -40,7 +40,10 @@ function removedLines(patch) {
 
 test("the patch series contains only the patches we know about", () => {
   const found = fs.readdirSync(PATCH_DIR).filter((f) => f.endsWith(".patch")).sort();
-  assert.deepEqual(found, ["0001-default-on-screenshot-redaction.patch"]);
+  assert.deepEqual(found, [
+    "0001-default-on-screenshot-redaction.patch",
+    "0002-gate-provider-construction.patch",
+  ]);
 });
 
 test("0001 touches exactly the four files it claims, in both browsers", () => {
@@ -77,6 +80,40 @@ test("0001 stays small — a patch series that grows silently is a fork in disgu
   const patch = readPatch("0001-default-on-screenshot-redaction.patch");
   assert.ok(patch.split("\n").length < 120, "patch 0001 has grown unexpectedly large");
   assert.equal(addedLines(patch).filter((l) => l.slice(1).trim() === "this.screenshotRedaction = true;").length, 2);
+});
+
+test("0002 touches only the two provider managers, in both browsers", () => {
+  const files = touchedFiles(readPatch("0002-gate-provider-construction.patch")).sort();
+  assert.deepEqual(files, [
+    "src/chrome/src/providers/manager.js",
+    "src/firefox/src/providers/manager.js",
+  ]);
+});
+
+test("0002 REMOVES nothing — it is a pure insertion around the existing switch", () => {
+  // The provider switch must survive untouched. If this patch ever starts
+  // deleting upstream lines, it has stopped being a wrap and become a
+  // rewrite, and that deserves review.
+  const removed = removedLines(readPatch("0002-gate-provider-construction.patch"));
+  assert.deepEqual(removed, [], "patch 0002 must not remove any upstream line");
+});
+
+test("0002 wraps AFTER construction, not per-case — so new provider types are covered", () => {
+  const added = addedLines(readPatch("0002-gate-provider-construction.patch"))
+    .map((l) => l.slice(1));
+  const wrapCalls = added.filter((l) => l.includes("wrapProviderWithPrivacyGate("));
+  // One import + one call site per browser. If this ever becomes eight
+  // call sites, a ninth provider type would silently escape the gate.
+  assert.equal(wrapCalls.filter((l) => l.includes("return ")).length, 2,
+    "expected exactly one wrap call per browser, applied after the switch");
+});
+
+test("0002 has NO try/catch fallback — a failed wrap must not yield a raw provider", () => {
+  const added = addedLines(readPatch("0002-gate-provider-construction.patch")).join(" ");
+  assert.ok(
+    !/catch/.test(added),
+    "a catch around the wrap would recreate threat T17 at the provider layer"
+  );
 });
 
 test("every patch is attributable — each carries an OZER PATCH marker", () => {
