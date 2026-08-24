@@ -44,3 +44,4 @@ Commit 42: feat(orchestration): add telemetry for prompt execution latency #9548
 Commit 43: feat(client): add settings panel for user preferences #1090
 Commit 44: feat(client): add settings panel for user preferences #8787
 Commit 45: feat(ai): integrate lightweight object detection model #4536
+Commit 46: fix(client): resolve popup UI glitch during capture sequence #9656
