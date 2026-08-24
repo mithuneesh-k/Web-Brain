@@ -89,3 +89,4 @@ Commit 87: feat(client): add settings panel for user preferences #8016
 Commit 88: fix(prompt): mitigate hallucination in structured JSON parsing #7908
 Commit 89: perf(edge): reduce latency in frame processing pipeline #5137
 Commit 90: perf(edge): reduce latency in frame processing pipeline #7895
+Commit 91: chore(automation): update playwright dependencies #3795
