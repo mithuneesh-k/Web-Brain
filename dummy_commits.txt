@@ -83,3 +83,4 @@ Commit 81: feat(browser): automate DOM traversal for context extraction #8609
 Commit 82: test(prompt): validate reasoning trace consistency #7610
 Commit 83: feat(orchestration): implement fallback mechanism for API timeouts #3611
 Commit 84: fix(browser): handle shadow DOM boundaries correctly #9002
+Commit 85: chore(extension): update manifest v3 permissions #2915
