@@ -66,3 +66,4 @@ Commit 64: perf(ai): implement model quantization for faster inference #7252
 Commit 65: chore(glue): setup structured logging across boundaries #8046
 Commit 66: chore(client): standardize css variables for theme support #3689
 Commit 67: refactor(vision): modularize frame extraction logic #9504
+Commit 68: feat(redaction): add support for user-defined redaction rules #4854
