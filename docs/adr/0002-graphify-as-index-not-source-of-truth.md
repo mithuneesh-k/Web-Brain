@@ -109,3 +109,35 @@ this version has no such command. That specific step was not performed
 in the installation session — it requires a fresh Claude Code session to
 even discover the newly-installed skill (see
 `docs/research/graphify.md`, "Cross-Agent Testing").
+
+## Closure (2026-08-24, follow-up session): version upgraded, scope narrowed to code-only
+
+A dedicated closure phase reconciled the `0.4.20`/`0.9.48` version
+discrepancy (root cause: a transient slow/degraded original install, not
+a real compatibility constraint — evidence in
+`docs/research/graphify.md`, "Closure and Version Reconciliation") and
+upgraded the installed version to `0.9.48`, which was confirmed by direct
+test to have the previously-missing `extract --code-only` command,
+working `.graphifyignore` exclusion, and a working (if undocumented)
+`--project` flag for repo-scoped skill install.
+
+**The final decision is Option A narrowed further: code-graph indexing
+only.** Neither headless `extract` (no configured LLM key, deliberately
+not added for this) nor the in-session `/graphify` skill (unavailable in
+every session tested, including a spawned subagent) could demonstrate
+Markdown indexing. Rather than leave that as an indefinite open item, the
+architecture is explicitly narrowed: **graphify indexes code, direct
+reading handles everything else.** See
+`docs/architecture/graphify-integration.md` for the finalized flow
+diagram and reproduction/removal procedures. This ADR's core precedence
+rule (git + Markdown win over graphify on any disagreement) is
+unaffected — it now simply applies to a graph that only ever contains
+code-derived nodes.
+
+A real reproducibility issue was also found and fixed during this
+closure: the newer version's "always use the graph" install step
+generated a `.claude/settings.json` hook containing a hardcoded,
+machine-specific absolute path. This was identified before commit and
+excluded — see `docs/architecture/graphify-integration.md` for the
+detail and the check future sessions should perform before committing
+any regenerated hook.

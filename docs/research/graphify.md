@@ -423,3 +423,160 @@ No graph existed in the Ozer repo before or after this session's work (`graphify
 ## Retrieval Test (adapted to what this version can actually do)
 
 The originally requested test — index a temporary Markdown fact, retrieve it via a fresh invocation — **could not be performed**, because this installed version has no code-independent way to index Markdown without the `/graphify` skill, and that skill cannot be invoked in this session (see Cross-Agent Testing above). The closest equivalent deterministic test this version's genuinely local, no-LLM capability supports **was performed and passed**: a unique code symbol was indexed via `graphify update .`, retrieved exactly via `graphify query`, and a sibling symbol under an ignored path was confirmed absent from the resulting graph — see ".graphifyignore — syntax and effectiveness" above. This is substantively the same validation (index → verify exclusion → retrieve known fact → confirm exact match), scoped to the capability this version actually has.
+
+---
+
+# Closure and Version Reconciliation (2026-08-24, follow-up session)
+
+## Status: VERIFIED (version reconciliation) / GRAPHIFY CODE INDEX ONLY (final scope decision)
+
+## Version discrepancy — explained with evidence, not assumed
+
+The original install (`uv tool install graphifyy`, no version pin) resolved
+to `0.4.20` and took **5 minutes 11 seconds** to complete (per the
+background task's own recorded log). Re-running the **exact same
+unversioned command** in this follow-up session, under normal network
+conditions, resolved to `0.9.48` (the actual current latest) in **under 4
+seconds**, and is reproducible (confirmed by running it twice). Explicitly
+installing `graphifyy==0.9.48` also succeeded cleanly with the same
+Python 3.14.3 interpreter already in use — **ruling out a Python-version
+compatibility constraint** as the cause (this was checked directly, not
+assumed).
+
+**Conclusion:** the `0.4.20` result was very likely caused by a transient
+condition during the original install — most plausibly a stale or
+degraded package-index response during an unusually slow (60x slower than
+normal) resolution, not a real version/compatibility constraint. This is
+the most evidence-consistent explanation available; a definitive root
+cause (e.g. a specific mirror or cache state) cannot be proven
+after the fact, and is recorded as a residual limitation rather than
+overclaimed.
+
+**Same package lineage, confirmed:** `graphifyy==0.9.48` installed from
+the same PyPI index, same project metadata (`Home-page:
+https://github.com/safishamsi/graphify`, same MIT license/author),
+consistent with `0.4.20` — not a different or renamed package.
+
+## Missing-functionality claims — tested directly on 0.9.48, not inferred from docs
+
+| Claimed capability | 0.4.20 | 0.9.48 | Evidence |
+|---|---|---|---|
+| `extract` / `--code-only` headless indexing | Absent | **Present, tested** | `graphify extract . --code-only` run in an isolated test directory: correctly found and indexed 1 code file, correctly skipped a file under an ignored `logs/` subdirectory (`.graphifyignore` respected), retrieval via `graphify query` returned the exact expected node/edges |
+| MCP server (`python -m graphify.serve` / `graphify-mcp`) | Absent | **Present, tested** | `graphify-mcp --help` (a real installed executable in 0.9.48, absent in 0.4.20) returns real usage text for `--transport {stdio,http}`, `--api-key`, etc. — not invoked as a live server (out of scope for this closure), but confirmed to exist and respond correctly to `--help` |
+| Project-scoped skill install (`--project`) | Absent (confirmed via `--help`, not just assumed) | **Present, tested — but undocumented in `--help`** | `graphify install --project` run directly in the Ozer repo: correctly wrote `.claude/skills/graphify/` (project-scoped, portable file content, no absolute paths) instead of the global `~/.claude/skills/` location used by the bare `graphify install` |
+| Broader retrieval (`affected`, `god-nodes`, `diagnose multigraph`, `tree`) | Absent | **Present** (per `--help`; not individually exercised in this closure — out of scope, code-graphing role doesn't currently need them) | `graphify --help` output |
+
+**Would upgrading preserve the privacy/local-only architecture?** Yes, for
+the code-only path specifically — re-verified directly (not assumed):
+`graphify extract . --code-only` in the isolated test above ran with no
+LLM provider key configured and completed in well under a second,
+consistent with a pure local tree-sitter AST parse, matching the same
+behavioral-evidence standard already established for `0.4.20`'s `update`
+command. `extract` without `--code-only` (Markdown/PDF/image semantic
+pass) still requires either an LLM key or the in-session skill in both
+versions — upgrading does not change that requirement, it only makes the
+`--code-only` restriction an explicit, documented flag instead of an
+implicit behavior discovered by testing.
+
+## A real reproducibility problem found and fixed during this closure
+
+Running `graphify install --project` (0.9.48) and `graphify claude
+install`-equivalent wiring together produced a `.claude/settings.json`
+`PreToolUse` hook containing a **hardcoded, machine-specific absolute
+path** (`C:/Users/nitis/.local/bin/graphify.EXE`) — a regression in
+portability versus `0.4.20`'s hook, which used a portable relative shell
+conditional (`[ -f graphify-out/graph.json ] && ... `). A hook committed
+with this absolute path would silently fail (wrong binary path) on any
+other machine, including CI or another contributor's laptop.
+
+**Resolved by not committing that hook.** `.claude/settings.json` was
+reverted to its previously-committed, portable, version-agnostic form.
+The project-scoped skill files themselves (`.claude/skills/graphify/`)
+were checked and confirmed to contain **no** absolute paths — this
+portability problem was specific to the generated hook command, not the
+skill content, and is documented here so a future session doesn't
+silently regenerate the same non-reproducible hook by re-running
+`graphify install --project`/`graphify claude install` without checking
+the result first.
+
+## Fresh-session test — inconclusive, not a real negative result
+
+A genuinely independent fresh Claude Code process could not be launched
+from within this session. As the closest available approximation, a
+subagent was spawned via the `Agent` tool and asked to (a) attempt
+`Skill({skill: "graphify"})`, (b) list its available skills, and (c)
+summarize `AGENTS.md`/`CONTEXT.md`. Result: the subagent also got
+`Unknown skill: graphify`, and its own skill listing showed **none** of
+the skills already confirmed installed on disk in this repo (not just
+graphify — the Matt Pocock skills from Phase 2 were absent too). This is
+**not treated as proof that a real fresh terminal-launched session would
+also fail** — it only demonstrates that `Agent`-tool subagents inherit
+the parent session's static skill registry rather than performing an
+independent, from-disk skill discovery. **Fresh-session discoverability
+of the graphify skill remains genuinely UNVERIFIED**, not disproven —
+this environment cannot produce a true independent test, and that
+limitation is stated plainly rather than papered over with the
+inconclusive subagent result.
+
+## Markdown retrieval — ruled out for now, with the specific evidence-based reason
+
+Two independent paths exist to index Markdown; both are blocked by
+concrete, checked facts, not assumption:
+
+1. **Headless `graphify extract` (no `--code-only`)**: requires one of
+   `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` /
+   `GOOGLE_API_KEY` / `DEEPSEEK_API_KEY` / `MOONSHOT_API_KEY` /
+   a running Ollama instance. Checked directly this session — **none are
+   configured**. Deliberately not configuring a new credential just to
+   run this test, since that would mean adding a new external-API
+   dependency to the machine for a validation task, and because sending
+   any Ozer content (even a synthetic test fact) to a third-party LLM
+   API deserves the same deliberateness as every other privacy-relevant
+   decision in this project, not an ad hoc credential added mid-task.
+2. **In-session `/graphify` skill** (uses the invoking IDE session's own
+   model, no separate key): confirmed unavailable in this session and in
+   a spawned subagent (see Fresh-session test above).
+
+**Per the explicit fallback instruction for this closure phase:**
+
+## GRAPHIFY CODE INDEX ONLY
+
+Graphify's verified, active role in Ozer is **code-graph indexing only**
+— local, no-LLM, tested and confirmed working end-to-end (index → exclude
+→ retrieve) on `0.9.48`'s `extract --code-only` command. Markdown/doc
+indexing is **not** an active or claimed capability of this integration
+until a future session with either (a) a genuinely fresh, independently-
+launched Claude Code process, or (b) a deliberately-provisioned LLM
+backend credential, can actually demonstrate it. Until then, Ozer's
+architecture treats Markdown/spec/ADR retrieval as **direct reading**
+(`Read`/`Grep`/`git`), exactly as it has throughout every phase of this
+project so far — see the revised architecture diagram in
+`docs/architecture/graphify-integration.md`.
+
+## Version decision
+
+**B + D combined**: **upgrade** the installed version from `0.4.20` to
+`0.9.48` (evidence supports it — same package lineage, more capable, no
+compatibility issue found), **and** narrow graphify's active role to
+**code graphing only** (option D) rather than attempting the broader
+Markdown-retrieval role assumed during Phase 3 research. This is not "C:
+replace" (no evidence another tool is better) and not "E: remove" (the
+code-only capability is real, tested, and free — no reason to discard
+it).
+
+## Security status
+
+- The previously-flagged `GROQ_API_KEY` was **not** inspected, displayed,
+  or referenced again in this closure session — its value remains
+  unknown to any file or log in this repository, exactly as required.
+- No global Claude configuration (`~/.claude/CLAUDE.md`,
+  `~/.claude/skills/`) was committed to this repository. The global
+  skill was refreshed to `0.9.48` locally (for consistency with the
+  project-scoped install and to clear a version-mismatch warning) — this
+  is a machine-local convenience action, explicitly not part of any git
+  commit.
+- The non-reproducible, machine-path-bearing `.claude/settings.json` hook
+  was identified and **not committed** — see "A real reproducibility
+  problem found and fixed" above.
+- No secrets appear in any committed file — scanned before staging (see
+  the change log for this closure).
