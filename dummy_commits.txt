@@ -104,3 +104,4 @@ Commit 102: feat(execution): implement robust retry mechanism for stale elements
 Commit 103: test(extension): add e2e tests for core extension workflows #9113
 Commit 104: feat(redaction): implement dynamic visual blurring for image regions #6483
 Commit 105: refactor(arch): isolate dependency injection container #9139
+Commit 106: chore(extension): update manifest v3 permissions #8397
