@@ -27,3 +27,4 @@ Commit 25: feat(vision): optimize bounding box inference on edge devices #1523
 Commit 26: perf(client): lazy load heavy UI components #2189
 Commit 27: chore(redaction): document new masking API endpoints #4391
 Commit 28: fix(execution): resolve timeout issue in headless worker #8936
+Commit 29: fix(edge): resolve OOM errors on low-memory devices #7923
