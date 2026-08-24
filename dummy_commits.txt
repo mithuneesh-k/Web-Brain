@@ -101,3 +101,4 @@ Commit 99: refactor(privacy): isolate sanitization logic into pure functions #29
 Commit 100: feat(prompt): refine zero-shot extraction prompt for better accuracy #5131
 Commit 101: refactor(extension): decouple content script from background logic #1406
 Commit 102: feat(execution): implement robust retry mechanism for stale elements #9180
+Commit 103: test(extension): add e2e tests for core extension workflows #9113
