@@ -106,3 +106,4 @@ Commit 104: feat(redaction): implement dynamic visual blurring for image regions
 Commit 105: refactor(arch): isolate dependency injection container #9139
 Commit 106: chore(extension): update manifest v3 permissions #8397
 Commit 107: chore(arch): refactor component communication interfaces #3726
+Commit 108: perf(ai): implement model quantization for faster inference #9139
