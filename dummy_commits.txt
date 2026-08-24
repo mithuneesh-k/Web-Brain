@@ -112,3 +112,4 @@ Commit 110: feat(client): implement visual feedback for capture actions #1195
 Commit 111: perf(edge): reduce latency in frame processing pipeline #2338
 Commit 112: feat(extension): implement background service worker for state sync #8355
 Commit 113: perf(client): lazy load heavy UI components #1173
+Commit 114: feat(browser): add support for handling complex popups #9114
