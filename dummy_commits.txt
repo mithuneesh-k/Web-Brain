@@ -15,3 +15,4 @@ Commit 13: feat(orchestration): add telemetry for prompt execution latency #3766
 Commit 14: perf(browser): optimize page load waiting logic #8869
 Commit 15: docs(arch): publish ADR for new modular architecture #6417
 Commit 16: perf(edge): reduce latency in frame processing pipeline #8824
+Commit 17: feat(arch): introduce unified event bus for modularity #6985
