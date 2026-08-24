@@ -44,3 +44,4 @@ Commit 42: feat(orchestration): implement fallback mechanism for API timeouts #6
 Commit 43: feat(client): implement visual feedback for capture actions #4532
 Commit 44: feat(eval): automate end-to-end performance tracking #2336
 Commit 45: refactor(vision): modularize frame extraction logic #4923
+Commit 46: refactor(arch): centralize configuration management #7825
