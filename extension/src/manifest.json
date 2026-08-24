@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Ozer (Phase 5 baseline)",
+  "version": "0.1.0",
+  "description": "Phase 5 reproducible baseline — stub round trip only, no privacy gate yet.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["http://localhost:8001/*", "http://localhost:8002/*"],
+  "permissions": []
+}

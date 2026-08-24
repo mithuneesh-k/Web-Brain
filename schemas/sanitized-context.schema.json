@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ozer.local/schemas/sanitized-context.schema.json",
+  "title": "SanitizedContext",
+  "description": "The only shape of page-derived context allowed to cross the network boundary from the extension to the server. Phase 5: a contract-shape proof, not real sanitized content — real content and real sanitization guarantees arrive in Phase 7.",
+  "type": "object",
+  "required": ["version", "page_url_hash", "elements", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version. Bump on any breaking change to this contract."
+    },
+    "page_url_hash": {
+      "type": "string",
+      "description": "A hash of the page URL, never the raw URL — avoids leaking navigation history verbatim even in this stub phase.",
+      "minLength": 1
+    },
+    "elements": {
+      "type": "array",
+      "description": "Non-sensitive, structural UI elements only. No raw screenshots, no raw DOM text beyond short accessible labels.",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

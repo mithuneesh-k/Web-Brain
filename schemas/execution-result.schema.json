@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ozer.local/schemas/execution-result.schema.json",
+  "title": "ExecutionResult",
+  "description": "Returned by the companion after attempting a TypedAction. Phase 5: stub execution only, no real browser action is taken.",
+  "type": "object",
+  "required": ["version", "status", "detail"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"]
+    },
+    "detail": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "page_url_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85",
+  "elements": [
+    { "id": "el-1", "role": "button", "text": "Say hello" }
+  ],
+  "timestamp": "2026-08-24T00:00:00Z"
+}

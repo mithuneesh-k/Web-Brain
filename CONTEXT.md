@@ -53,9 +53,10 @@ Every subsystem should state which metric it serves and how it's measured.
   `logs/`) is being established in this session, per `OZER-FOUNDATION-001`.
 - Matt Pocock skill package installed (`mattpocock/skills`, 36 skills) —
   see `docs/research/matt-pocock-skills.md`, `docs/adr/0001-*.md`.
-- Graphify (Graphify Labs, PyPI `graphifyy`) researched and RECOMMENDED as
-  a local, code-only index layer only — not installed yet. See
-  `docs/research/graphify.md`, `docs/adr/0002-*.md`.
+- Graphify (Graphify Labs, PyPI `graphifyy`) installed at version
+  `0.9.48`, scoped to **code-graph indexing only** — Markdown/spec/ADR
+  retrieval remains direct reading. See `docs/research/graphify.md`,
+  `docs/architecture/graphify-integration.md`, `docs/adr/0002-*.md`.
 - browser-use (`browser-use/browser-use`, MIT, commit
   `85ddbfedf609166b2d2c76c3d80506649fee82a9`) inspected at source level.
   **Confirmed**: it is a Python process that drives a real Chrome/Chromium
@@ -68,8 +69,18 @@ Every subsystem should state which metric it serves and how it's measured.
   `docs/adr/0003-browser-use-integration-strategy.md`,
   `docs/architecture/upstream.md`. **No browser-use code has been
   installed or copied into Ozer yet** — decision only, no implementation.
-- No privacy architecture has been implemented yet. No local model has
-  been selected.
+- **Phase 5 (reproducible baseline) complete**: `extension/` (Manifest
+  V3 stub), `server/` (FastAPI reasoning stub), `companion/` (FastAPI
+  execution stub), `schemas/` (shared JSON Schema contracts:
+  `SanitizedContext`, `TypedAction`, `ExecutionResult`). A real,
+  live end-to-end round trip was proven (not simulated) — see
+  `docs/specs/phase5-reproducible-baseline.md` and
+  `docs/adr/0004-phase5-monorepo-runtime-choice.md`. All stub logic is
+  explicitly marked as such in code comments; no real reasoning,
+  detection, or browser automation exists yet.
+- No privacy architecture has been implemented yet (Phase 6/7). No local
+  vision model has been selected (Phase 8). browser-use is not yet
+  installed as a real dependency (Phase 9, per ADR 0003).
 - GitHub remote push access: VERIFIED as of this session (collaborator
   access granted; local HEAD and `origin/main` independently confirmed
   equal after every phase).
