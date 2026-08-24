@@ -17,3 +17,4 @@ Commit 15: docs(arch): publish ADR for new modular architecture #6417
 Commit 16: perf(edge): reduce latency in frame processing pipeline #8824
 Commit 17: feat(arch): introduce unified event bus for modularity #6985
 Commit 18: feat(redaction): add support for user-defined redaction rules #3193
+Commit 19: feat(browser): add support for handling complex popups #1794
