@@ -4,3 +4,4 @@ Commit 2: feat(arch): introduce unified event bus for modularity #3871
 Commit 3: feat(ai): integrate lightweight object detection model #3131
 Commit 4: feat(orchestration): implement fallback mechanism for API timeouts #4058
 Commit 5: perf(edge): reduce latency in frame processing pipeline #6437
+Commit 6: perf(redaction): optimize DOM traversal during masking pass #7595
