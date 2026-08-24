@@ -48,3 +48,4 @@ Commit 46: fix(client): resolve popup UI glitch during capture sequence #9656
 Commit 47: fix(vision): correct aspect ratio distortion during downscaling #9936
 Commit 48: fix(edge): resolve OOM errors on low-memory devices #8947
 Commit 49: fix(edge): resolve OOM errors on low-memory devices #9434
+Commit 50: refactor(extension): decouple content script from background logic #1744
