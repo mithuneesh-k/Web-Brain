@@ -23,3 +23,4 @@ Commit 21: test(automation): add unit tests for click interception #3446
 Commit 22: chore(orchestration): upgrade underlying LLM client library #6493
 Commit 23: chore(automation): update playwright dependencies #8593
 Commit 24: fix(execution): prevent memory leak during long sessions #7673
+Commit 25: chore(edge): update tensorrt execution provider #2192
