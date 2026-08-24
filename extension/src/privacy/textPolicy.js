@@ -34,6 +34,25 @@
  *
  *   3. ENFORCEMENT — providerGate.js. Already built and tested.
  *
+ * PURITY IS A HARD CONTRACT, NOT A PREFERENCE.
+ *
+ * The same request passes through up to three independent sinks — the
+ * provider gate, `_logDebug`, and the trace recorder. Phase 13 showed
+ * no single upstream point exists to unify them, so the invariant is
+ * "one policy applied at every sink" rather than "one invocation". That
+ * only holds if the policy is pure:
+ *
+ *     same input + same policy context  =>  same verdict + same rewrite
+ *
+ * Concretely, an implementation MUST NOT use: timestamps, random or
+ * generated ids, mutable module state, counters, or any sink-specific
+ * branching. If two sinks can disagree about the same message array,
+ * one of them leaks.
+ *
+ * Memoisation is therefore an optimisation only. Correctness must never
+ * depend on a cache hit, and cache behaviour must never be part of the
+ * security argument.
+ *
  * An asymmetry worth recording: on the image path Ozer *verifies* a
  * transform WebBrain already performs. On the text path there is no
  * upstream transformer, so Ozer may have to both sanitise and verify.
