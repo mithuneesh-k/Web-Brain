@@ -51,17 +51,35 @@ Every subsystem should state which metric it serves and how it's measured.
   implementation — treat as a bootstrap target, not a working codebase.
 - Engineering operating system (this file, `AGENTS.md`, `CLAUDE.md`, `docs/`,
   `logs/`) is being established in this session, per `OZER-FOUNDATION-001`.
-- No browser-use import has happened yet. No privacy architecture has been
-  implemented yet. No local model has been selected.
-- GitHub remote push access: UNVERIFIED as of this session — see baseline report.
+- Matt Pocock skill package installed (`mattpocock/skills`, 36 skills) —
+  see `docs/research/matt-pocock-skills.md`, `docs/adr/0001-*.md`.
+- Graphify (Graphify Labs, PyPI `graphifyy`) researched and RECOMMENDED as
+  a local, code-only index layer only — not installed yet. See
+  `docs/research/graphify.md`, `docs/adr/0002-*.md`.
+- browser-use (`browser-use/browser-use`, MIT, commit
+  `85ddbfedf609166b2d2c76c3d80506649fee82a9`) inspected at source level.
+  **Confirmed**: it is a Python process that drives a real Chrome/Chromium
+  binary over CDP — it cannot run inside a browser extension, and its
+  default screenshot/`extract` paths send raw page content to an LLM with
+  no sanitization. Integration strategy decided: adapter/companion
+  architecture (browser-use as a pinned dependency of a separate local
+  process, downstream of Ozer's own privacy gate — never given raw
+  screenshots). See `docs/research/browser-use.md`,
+  `docs/adr/0003-browser-use-integration-strategy.md`,
+  `docs/architecture/upstream.md`. **No browser-use code has been
+  installed or copied into Ozer yet** — decision only, no implementation.
+- No privacy architecture has been implemented yet. No local model has
+  been selected.
+- GitHub remote push access: VERIFIED as of this session (collaborator
+  access granted; local HEAD and `origin/main` independently confirmed
+  equal after every phase).
 
 ## Open questions (unresolved)
 
-- Which Graphify product/version, if any, is intended for cross-agent memory
-  (see `docs/research/` once investigated). Markdown + git remain authoritative
-  regardless of the answer.
-- Vendor vs. depend-on vs. fork vs. adapter decision for browser-use — not yet
-  made (Phase 4 of bootstrap sequence).
+- Whether to use browser-use's own `Agent`/LLM reasoning loop, or only
+  its lower-level execution/DOM layers under an Ozer-authored reasoning
+  contract — deferred to server-reasoning design (later phase), not
+  blocking the upstream-boundary decision already made.
 - Target browsers confirmed as Chrome + Firefox; extension API differences not
   yet investigated.
 - Local inference stack (WebGPU/WASM/ONNX Runtime Web/Transformers.js/model
