@@ -117,3 +117,4 @@ Commit 115: refactor(arch): isolate dependency injection container #9639
 Commit 116: fix(execution): prevent memory leak during long sessions #5253
 Commit 117: perf(edge): reduce latency in frame processing pipeline #2718
 Commit 118: refactor(privacy): isolate sanitization logic into pure functions #5754
+Commit 119: fix(execution): resolve timeout issue in headless worker #8304
