@@ -1,53 +1,39 @@
 /**
  * Core round-trip logic, extracted from background.js so it is testable
  * with `node --test` without a real browser. STUB phase (Phase 5): the
- * sanitized context here is fixed/fake, not derived from a real page —
- * real DOM extraction and sanitization arrive in Phase 7.
+ * raw elements here are fixed/fake, not derived from a real page — real
+ * DOM extraction from a live page is not built yet.
  *
- * Phase 6: every SanitizedContext is passed through assertSafeForEgress()
- * before the network call is made — this is the actual enforcement
- * point, not just a function that exists unused. If the gate blocks it,
- * the network call is never made (fail-closed).
+ * Phase 6: the server leg is gated by assertSafeForEgress() before any
+ * network call.
+ *
+ * Phase 7: the server leg goes through OzerPrivacyClient
+ * (detection -> redaction -> gate -> transport) instead of building a
+ * SanitizedContext and calling fetch directly here — this closes Threat
+ * T9's gap (nothing forcing a code path to use the gate) for this real
+ * code path. See extension/test/privacy/ozerPrivacyClient.test.js for
+ * the regression test that would catch this being reverted.
  *
  * @param {{fetch: typeof fetch, serverUrl: string, companionUrl: string}} deps
  * @returns {Promise<{typedAction: object, executionResult: object}>}
  */
-const { assertSafeForEgress } =
+const { OzerPrivacyClient } =
   typeof module !== "undefined" && module.exports
-    ? require("./privacy/egressGate.js")
+    ? require("./privacy/ozerPrivacyClient.js")
     : self;
 
 async function runRoundTrip(deps) {
   const { fetch, serverUrl, companionUrl } = deps;
 
-  const sanitizedContext = {
-    version: "1.1.0",
-    page_url_hash:
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85",
-    elements: [{ id: "el-1", role: "button", text: "Say hello", redacted: false }],
-    privacy: {
-      redaction_applied: false,
-      redacted_regions: [],
-      redaction_types: [],
-      visual_context_version: "none",
-    },
-    timestamp: new Date().toISOString(),
-  };
+  const rawElements = [{ id: "el-1", role: "button", text: "Say hello" }];
+  const pageUrlHash =
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85";
 
-  const gateResult = assertSafeForEgress(sanitizedContext);
-  if (!gateResult.allowed) {
-    throw new Error(`privacy gate blocked egress: ${gateResult.reasons.join("; ")}`);
-  }
-
-  const reasonResp = await fetch(`${serverUrl}/reason`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(sanitizedContext),
+  const typedAction = await OzerPrivacyClient.postSanitizedContext(rawElements, {
+    fetch,
+    serverUrl,
+    pageUrlHash,
   });
-  if (!reasonResp.ok) {
-    throw new Error(`server /reason failed: ${reasonResp.status}`);
-  }
-  const typedAction = await reasonResp.json();
 
   const executeResp = await fetch(`${companionUrl}/execute`, {
     method: "POST",

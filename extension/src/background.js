@@ -4,7 +4,14 @@
  * the pure, tested runRoundTrip() logic in roundtrip.js. No real DOM
  * extraction or privacy gate exists yet — see docs/specs/phase5-reproducible-baseline.md.
  */
-importScripts("privacy/patterns.js", "privacy/egressGate.js", "roundtrip.js");
+importScripts(
+  "privacy/patterns.js",
+  "privacy/egressGate.js",
+  "detection/domDetector.js",
+  "redaction/redactor.js",
+  "privacy/ozerPrivacyClient.js",
+  "roundtrip.js"
+);
 
 const SERVER_URL = "http://localhost:8001";
 const COMPANION_URL = "http://localhost:8002";
