@@ -4,19 +4,40 @@
  * sanitized context here is fixed/fake, not derived from a real page —
  * real DOM extraction and sanitization arrive in Phase 7.
  *
+ * Phase 6: every SanitizedContext is passed through assertSafeForEgress()
+ * before the network call is made — this is the actual enforcement
+ * point, not just a function that exists unused. If the gate blocks it,
+ * the network call is never made (fail-closed).
+ *
  * @param {{fetch: typeof fetch, serverUrl: string, companionUrl: string}} deps
  * @returns {Promise<{typedAction: object, executionResult: object}>}
  */
+const { assertSafeForEgress } =
+  typeof module !== "undefined" && module.exports
+    ? require("./privacy/egressGate.js")
+    : self;
+
 async function runRoundTrip(deps) {
   const { fetch, serverUrl, companionUrl } = deps;
 
   const sanitizedContext = {
-    version: "1.0.0",
+    version: "1.1.0",
     page_url_hash:
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85",
-    elements: [{ id: "el-1", role: "button", text: "Say hello" }],
+    elements: [{ id: "el-1", role: "button", text: "Say hello", redacted: false }],
+    privacy: {
+      redaction_applied: false,
+      redacted_regions: [],
+      redaction_types: [],
+      visual_context_version: "none",
+    },
     timestamp: new Date().toISOString(),
   };
+
+  const gateResult = assertSafeForEgress(sanitizedContext);
+  if (!gateResult.allowed) {
+    throw new Error(`privacy gate blocked egress: ${gateResult.reasons.join("; ")}`);
+  }
 
   const reasonResp = await fetch(`${serverUrl}/reason`, {
     method: "POST",
