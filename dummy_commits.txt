@@ -52,3 +52,4 @@ Commit 50: refactor(extension): decouple content script from background logic #1
 Commit 51: fix(privacy): prevent leak of credentials in crash reports #1169
 Commit 52: fix(redaction): ensure robust DOM node replacement for sensitive data #5093
 Commit 53: feat(ai): integrate lightweight object detection model #6682
+Commit 54: feat(browser): add support for handling complex popups #6683
