@@ -170,3 +170,97 @@ element, so a real detector drops in later without touching geometry,
 projection, or redaction.
 
 Suite total: **207** (186 JS + 21 Python).
+
+---
+
+## Phase 12D (task 3): the provider decorator
+
+`providerGate.js` — `wrapProviderWithPrivacyGate(provider, policy)`.
+
+### Why the provider object, not the call sites
+
+Phase 12D's trace found 129 message-construction sites, 3 dispatch
+sites, and — decisively — that the **main streaming path bypasses its
+own `_chatStreamWithCostAllowance` wrapper**, calling
+`provider.chatStream` directly. Gating the wrappers would have missed
+the primary interactive path.
+
+The provider object is the only seam every path must cross, and
+`providers/manager.js:872-886` constructs all eight provider types in
+one place. Wrapping there makes the invariant **structural**:
+
+> No provider can receive a message without passing Ozer's policy.
+
+A future call site added to `agent.js` is covered automatically.
+
+### Why a Proxy, and a bug that proves the point
+
+`agent.js` reads many provider properties — `model`, `supportsTools`,
+`supportsVision`, `supportsDocuments`, `constructor.name` for logging.
+An explicit wrapper class must enumerate them, and any omission breaks
+the agent subtly and late. A Proxy forwards everything but the two
+gated methods.
+
+The first implementation bound forwarded functions to the target. A test
+caught that this also binds `constructor`, so `constructor.name` became
+`"bound FakeProvider"` — which would have silently corrupted **every**
+WebBrain log line and trace record that reads it.
+
+Removing the bind fixed it, and is also the **more secure** choice:
+leaving `this` as the proxy means an internal `this.chat(...)` from
+inside a provider is *also* gated. Binding to the target would have
+handed such a call the ungated method — exactly the bypass this module
+exists to prevent.
+
+Caveat recorded in the source: a provider using ECMAScript private
+fields (`#x`) would break under a Proxy. WebBrain's providers use
+ordinary properties, so this does not currently apply.
+
+### What is proven (19 tests)
+
+| Property | Status |
+|---|---|
+| `chat()` cannot bypass the gate | blocked ⇒ inner provider never called |
+| `chatStream()` cannot bypass the gate | blocked ⇒ never called, **and nothing yielded** |
+| Transparent to all provider types | properties, writes, and `constructor.name` pass through |
+| Raw provider never sees rejected messages | asserted via call-count spies on both paths |
+| Fail-closed | policy throw, malformed verdict, malformed replacement messages, missing policy, non-provider — all block |
+| Streaming ≡ non-streaming | same verdict, same ordering, policy evaluated before any provider work |
+| Blocked errors do not leak | `PrivacyBlockedError` carries reasons, never payload content |
+
+A policy may **rewrite** messages; if it does, the provider sees only
+the rewritten form — asserted by checking the original secret is absent
+from what the inner provider received.
+
+### Deliberately NOT included: the policy
+
+Ships with `ALLOW_ALL_POLICY`, explicitly flagged `isPlaceholder: true`
+and asserted as such by a test, so it cannot quietly become the shipped
+default.
+
+The text-path *policy* is a genuinely hard question and is separated on
+purpose:
+
+- **Detection** — what sensitive information exists.
+- **Provenance and intent** — page/DOM/AX/tool output is ambient
+  untrusted context; user-authored instructions are intentional. Someone
+  who types *"tell me my bank balance"* may want the model to use it.
+  Applying the DOM policy to prose would turn Ozer into something that
+  randomly breaks tasks.
+- **Enforcement** — this module.
+
+Baking a guess about user intent into the enforcement layer would be the
+wrong order. Enforcement is proven first; policy is decided with its own
+tests.
+
+### Still open
+
+- **Traces and debug logs remain a separate egress surface.**
+  `_logDebug` and `trace.recordLLMRequest` receive the raw array
+  *before* dispatch, so a blocked request can still persist sensitive
+  text. The gate cannot fix this; it needs its own intervention, ideally
+  consuming the *same* sanitised representation so there are not two
+  independent text sanitisers.
+- No patch wires the decorator into `manager.js` yet.
+
+Suite total: **226** (205 JS + 21 Python).
