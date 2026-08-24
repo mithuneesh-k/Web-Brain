@@ -1,2 +1,3 @@
 Commit 0: feat(browser): automate DOM traversal for context extraction #6997
 Commit 1: chore(edge): update tensorrt execution provider #3706
+Commit 2: feat(client): implement visual feedback for capture actions #7086
