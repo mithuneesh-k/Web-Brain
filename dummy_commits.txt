@@ -80,3 +80,4 @@ Commit 78: refactor(privacy): isolate sanitization logic into pure functions #60
 Commit 79: fix(browser): handle shadow DOM boundaries correctly #7718
 Commit 80: perf(redaction): optimize DOM traversal during masking pass #3955
 Commit 81: chore(automation): update playwright dependencies #4647
+Commit 82: fix(redaction): ensure robust DOM node replacement for sensitive data #9113
