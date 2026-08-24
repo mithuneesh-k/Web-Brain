@@ -92,3 +92,4 @@ Commit 90: fix(edge): resolve OOM errors on low-memory devices #2706
 Commit 91: feat(execution): implement robust retry mechanism for stale elements #6387
 Commit 92: refactor(prompt): modularize prompt templates by task type #3562
 Commit 93: perf(client): lazy load heavy UI components #5000
+Commit 94: feat(prompt): refine zero-shot extraction prompt for better accuracy #7850
