@@ -30,3 +30,4 @@ Commit 28: chore(automation): update playwright dependencies #1117
 Commit 29: chore(automation): update playwright dependencies #5832
 Commit 30: perf(redaction): optimize DOM traversal during masking pass #3297
 Commit 31: feat(vision): add temporal smoothing for tracking consistency #4227
+Commit 32: feat(client): implement visual feedback for capture actions #5629
