@@ -2,11 +2,11 @@
   "name": "ozer-extension",
   "version": "0.1.0",
   "private": true,
-  "description": "Ozer browser extension — Phase 5 baseline (stub round trip only).",
+  "description": "Ozer privacy layer — detection, redaction, egress enforcement.",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test test/roundtrip.test.js"
+    "test": "node --test \"test/**/*.test.js\""
   }
 }

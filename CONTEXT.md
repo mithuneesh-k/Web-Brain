@@ -115,6 +115,52 @@ Every subsystem should state which metric it serves and how it's measured.
   access granted; local HEAD and `origin/main` independently confirmed
   equal after every phase).
 
+## Current Privacy Verification Status
+
+**Real browser geometry. Synthetic image capture. No extension
+integration yet.**
+
+Keep those three clauses together. They state, in order, exactly what
+has and has not been proven, and they are the guard against this claim
+being quietly upgraded in a later phase.
+
+Tier 1 and Tier 2 region geometry is verified against real
+browser-rendered geometry, including fractional DPR (`1.25`) and
+viewport-overflow cases.
+
+The verification uses real `getBoundingClientRect()` output from a
+browser-rendered fixture. **The image buffer used in the integration
+test is synthetic**, and Ozer is **not yet integrated into a loaded
+browser extension**. This is therefore evidence that the DOM-to-pixel
+coordinate boundary is correct for the tested cases — **not** a claim of
+full browser-extension end-to-end verification.
+
+On the project-authored fixture, Tier 1 and Tier 2 detected all 5
+intended sensitive fields with 0 observed false positives. **This is a
+deterministic integration check, not an independent benchmark** — the
+fixture was written by this project, so the number measures internal
+consistency, not real-world recall.
+
+The next major privacy gap is Tier 3 visual detection and real
+screenshot capture through the WebBrain integration path.
+
+### Phrases that would be false if written today
+
+Listed explicitly so nobody has to re-derive the boundary:
+
+- "end-to-end verified in the browser" — the extension integration does
+  not exist.
+- "verified on real screenshots" — the integration test redacts a
+  synthetic pixel buffer, not a captured image.
+- "N% recall/precision" quoted without "on our own fixture".
+- "Tier 3 works" / "faces are redacted" — no face detector exists; the
+  demo images use hand-supplied boxes.
+- "blur is irreversible" — it is not; solid masking (the default) is
+  the only guarantee.
+
+Evidence for everything above: `docs/specs/phase10-region-production.md`,
+`extension/test/integration/realPagePipeline.test.js`.
+
 ## Open questions (unresolved)
 
 - **Distribution licensing — the real blocker.** WebBrain 33.0.0+ is
