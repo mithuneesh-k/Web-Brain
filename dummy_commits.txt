@@ -33,3 +33,4 @@ Commit 31: perf(client): lazy load heavy UI components #4079
 Commit 32: chore(client): standardize css variables for theme support #5484
 Commit 33: refactor(arch): centralize configuration management #2326
 Commit 34: fix(privacy): prevent leak of credentials in crash reports #5791
+Commit 35: perf(client): lazy load heavy UI components #8333
