@@ -10,3 +10,4 @@ Commit 8: perf(redaction): optimize DOM traversal during masking pass #5466
 Commit 9: feat(privacy): add regex-based PII masking to text streams #8769
 Commit 10: chore(edge): update tensorrt execution provider #5963
 Commit 11: fix(execution): resolve timeout issue in headless worker #1571
+Commit 12: test(vision): benchmark new segmentation architecture #3447
