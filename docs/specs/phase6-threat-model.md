@@ -15,7 +15,7 @@ discovered after the fact.
   actual code-level test instead of just a documented risk.
 
 ## Goal
-15 threats (T1–T15), each with entry point, asset at risk, attack
+17 threats (T1–T17), each with entry point, asset at risk, attack
 scenario, required mitigation, detection method, residual risk, and test
 requirement. No fabricated likelihood/probability values — where
 likelihood can't be evidenced, marked `UNKNOWN`, per instruction.
@@ -282,6 +282,55 @@ rather than glossed over.
   guarantee future code follows it. **Likelihood: UNKNOWN**, contingent
   on future implementation discipline.
 - **Test requirement:** IMPLEMENTED (Test 8).
+
+### T16: Region/screenshot TOCTOU mismatch (added Phase 11B)
+
+- **Entry point:** the page mutates between the moment sensitive regions
+  are computed and the moment the screenshot is captured.
+- **Asset at risk:** any sensitive value that moves, appears, or changes
+  size in that window.
+- **Attack scenario:** a password field is measured at rect A; the page
+  reflows or lazily renders; the capture shows the secret at rect B.
+  Redaction masks A. The secret escapes at B. Also reachable without an
+  attacker, by ordinary async rendering.
+- **Mitigation:** **NOT IMPLEMENTED in Ozer.** WebBrain v32.2.3 does
+  guard this in its `/screenshot` path by capturing the region snapshot
+  *twice*, before and after, and refusing when
+  `JSON.stringify(before.snapshot) !== JSON.stringify(after.snapshot)`
+  (`agent.js:1749-1754`). Ozer's `redactImageData()` will happily mask
+  stale coordinates with no signal.
+- **Detection method:** before/after snapshot equality, as upstream does.
+- **Residual risk:** currently total for Ozer's own pipeline.
+  **Likelihood: UNKNOWN**, but ordinary async page rendering reaches it
+  without an adversary, so this is not an exotic case.
+- **Test requirement:** OUTSTANDING. Needs a test where geometry is
+  captured, the fixture mutates, and the pipeline is asserted to refuse
+  rather than mask stale boxes.
+
+### T17: Redactor fails open (added Phase 11B)
+
+- **Entry point:** the redaction transform fails — image decode error,
+  region collection returning null, canvas unavailable.
+- **Asset at risk:** the entire unredacted screenshot.
+- **Attack scenario:** on a page where the content script cannot be
+  injected, or under resource pressure, region collection returns null
+  and the "redacted" image is byte-identical to the original.
+- **Mitigation, upstream:** partial. `_redactScreenshotDataUrl` and
+  `pixelateDataUrl` both `return dataUrl` on failure — fail-open at the
+  transform. The `/screenshot` path compensates with an explicit no-op
+  check (`agent.js:1762`), but `_captureAutoScreenshot` has **no such
+  check** and cannot tell that "redacted" is the original.
+- **Mitigation, Ozer:** this is the strongest argument for Ozer as an
+  **independent egress verifier** — a non-co-operating check that the
+  payload satisfies policy, rather than trusting the transform ran.
+  Ozer's own `redactImageData()` is fail-closed by contrast (it throws),
+  which is the correct posture.
+- **Detection method:** verify at the egress boundary, not at the
+  transform.
+- **Residual risk:** high until an egress verifier exists.
+  **Likelihood: UNKNOWN.** Verified by reading the code paths; not
+  demonstrated as an end-to-end exploit.
+- **Test requirement:** OUTSTANDING.
 
 ## Non-goals
 See individual `OUT OF SCOPE` threats above — T3, T6, T7, T8, T13, T14

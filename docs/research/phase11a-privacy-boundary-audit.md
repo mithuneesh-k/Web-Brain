@@ -1,6 +1,6 @@
 # Phase 11A: WebBrain v32.2.3 Privacy Boundary Audit
 
-## Status: Q1, Q2 answered decisively. Q3 substantially answered. Q4 not attempted. Source-level evidence at pinned commit `52fb7914611717f2e9774dc137036a074b293b1d`.
+## Status: Q1–Q3 answered. Q4 answered in the Phase 11B section appended below (it was open when this section was written). Source-level evidence at pinned commit `52fb7914611717f2e9774dc137036a074b293b1d`.
 
 ## Headline
 
@@ -119,11 +119,10 @@ difference of *policy strength*, not of capability.
 
 ## Q4 — Can WebBrain's collector accept Ozer detection?
 
-**Not attempted.** Requires reading
-`content/redaction-regions.js` region-emission in full plus
-`agent/screenshot-redaction.js`. This is the next thing to establish,
-because it decides whether Ozer supplies detection into WebBrain's one
-pipeline (the "one region list" outcome) or sits beside it.
+**Answered in the Phase 11B section below: yes.** The pipeline is a
+chain of exported pure functions and `pixelateDataUrl` consumes a plain
+regions array, so Ozer detection (including Tier 3 boxes with no DOM
+element) can feed the same single pipeline.
 
 ---
 
@@ -179,3 +178,140 @@ would happily mask stale coordinates.
   **but** it understated WebBrain's rigour (fail-closed, TOCTOU) and
   did not know redaction was off by default — which reframes the
   opportunity from "duplicate" to "policy and coverage".
+
+---
+
+# Phase 11B: Single Privacy Pipeline Feasibility
+
+Answered from `agent/screenshot-redaction.js` (449 lines) and
+`content/redaction-regions.js` at the pinned commit.
+
+## Q1 — Can external regions enter WebBrain's redaction pipeline?
+
+**Yes.** The pipeline is a chain of **exported pure functions**:
+
+```
+selectRedactionRegions(elements, opts)   -> [{kind, rect}]   (detection)
+mergeRedactionFrameRegions(frames, opts) -> [{kind, rect}]   (iframe merge)
+mapRegionsToImage(regions, opts)         -> [{kind, rect}]   (CSS px -> image px)
+pixelateDataUrl(dataUrl, regions, opts)  -> dataUrl          (apply)
+```
+
+`pixelateDataUrl` accepts **any** plain regions array. Nothing binds a
+region to a DOM element by the time it reaches the redactor.
+
+## Q2 — The region data structure
+
+Input to detection:
+
+```js
+{ kind: 'input'|'textarea'|'select'|'text',
+  type?: string,          // input type attribute
+  rect: {x, y, w, h},     // CSS pixels
+  text?: string, value?: string }
+```
+
+Output, and what the redactor consumes:
+
+```js
+{ kind: string, rect: {x, y, w, h} }
+```
+
+`REGION_KIND` = `password | input | email | phone`.
+
+Coordinate handling is explicit and richer than Ozer's:
+`mapRegionsToImage` takes `scaleX`/`scaleY` (independent axes),
+`offsetX`/`offsetY` (captured-area origin in page space), and
+`imageWidth`/`imageHeight` for clamping. Frame identity and coordinate
+space are handled by `mergeRedactionFrameRegions` and the
+`coordinateSpace: 'page'|'viewport'` parameter. Visibility state is
+resolved *in the content script* (`contributesPixels`) and never
+reaches this structure.
+
+## Q3 — Can Ozer's SensitiveRegion map in without loss?
+
+**Geometry: lossless. Semantics: lossy — but the loss is harmless at
+the redactor.**
+
+`boundingBox {x,y,width,height}` -> `rect {x,y,w,h}` is a rename.
+
+The semantic fields have no home: `confidence`, `source`, `id`,
+`elementId`, and the categories `financial` and `visual_identity` have
+no `REGION_KIND` equivalent.
+
+**However** — decisive detail — `pixelateDataUrl` reads **only
+`region.rect`**. It never reads `kind`. So `kind` is selection/debug
+metadata, not an input to pixel application.
+
+The correct design follows: **Ozer keeps `SensitiveRegion` as its own
+source of truth and projects `{kind, rect}` only at the redactor
+boundary**, where nothing but geometry is consulted. No meaningful loss.
+
+## Q4 — Can Tier 3 regions with no DOM element be injected?
+
+**Yes, structurally.** A face bounding box is indistinguishable from any
+other region once it reaches `pixelateDataUrl`, which requires only
+`rect`. Tier 3 becomes another *producer* into the same list rather than
+a parallel subsystem — exactly the "one region pipeline" outcome.
+
+The only work is coordinate space: a face box found in **image pixels**
+must either skip `mapRegionsToImage` or be converted back to CSS px
+first, since that function assumes CSS-pixel input.
+
+## A real fail-open path found while answering Q1
+
+`_redactScreenshotDataUrl` returns the **unredacted** image on failure:
+
+```js
+} catch { return dataUrl; }          // image decode failure
+if (!snapshot) return dataUrl;       // region collection failed
+```
+
+and `pixelateDataUrl` does the same:
+
+```js
+} catch { return dataUrl; }
+```
+
+The `/screenshot` slash-command path **compensates** with an explicit
+no-op check (`agent.js:1762`): if regions existed but the image came
+back byte-identical, it aborts. **`_captureAutoScreenshot` has no such
+check** — it returns `{ dataUrl: redacted, ... }` and cannot tell that
+"redacted" is actually the original.
+
+**So with redaction enabled, an auto-screenshot whose region collection
+fails is sent unredacted, with no error surfaced.** I did not
+exhaustively trace every consumer, so this is stated as: *no no-op guard
+exists on this path*, verified by reading it — not as a proven
+end-to-end exploit.
+
+This is precisely the case for Ozer as an **independent egress
+verifier**: a second, non-co-operating check that the payload actually
+satisfies policy, rather than trusting that the transform ran.
+
+## Conclusion
+
+The "one region pipeline" architecture is **feasible**:
+
+```
+WebBrain content-script collection (all frames, visibility, coord space)
+                 |
+        candidate elements
+                 |
+     +-----------+-----------+
+     |                       |
+WebBrain rules        Ozer Tier 1/2/3 policy
+     |                       |
+     +-----------+-----------+
+                 |
+        ONE region list  ({kind, rect})
+                 |
+   mapRegionsToImage -> pixelateDataUrl
+                 |
+        Ozer egress verification  <-- catches the fail-open path
+                 |
+             provider
+```
+
+Ozer contributes **detection policy** and **egress verification**, and
+reuses WebBrain's collection, coordinate, and application machinery.
