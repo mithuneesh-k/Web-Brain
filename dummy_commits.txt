@@ -1,2 +1,3 @@
 Commit 0: test(automation): add unit tests for click interception #5095
 Commit 1: feat(extension): implement background service worker for state sync #2830
+Commit 2: feat(arch): introduce unified event bus for modularity #3871
