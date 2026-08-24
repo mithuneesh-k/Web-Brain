@@ -117,3 +117,28 @@ data leaving the trusted boundary, not more.
   to use it — that enforcement point should be added when the extension
   gains a real network-calling module beyond the Phase 5 stub).
 
+## Update (Phase 8): the enforcement gap above is closed for the codebase as it exists today
+
+`OzerPrivacyClient` (`extension/src/privacy/ozerPrivacyClient.js`) is
+now the *only* file under `extension/src/` permitted to call `fetch()`
+— both legs (`postSanitizedContext()` to the server,
+`postTypedAction()` to the companion). This is enforced by
+`extension/test/architecture/egressEnforcement.test.js`, which scans
+every `.js` file under `extension/src/` (stripping comments/strings
+first, so a docstring mentioning `fetch(` doesn't false-positive) and
+fails if any file other than `ozerPrivacyClient.js` contains a direct
+call. Detection is also now Tier 1 + Tier 2 (`domDetector.js` +
+`tier2Detector.js`, merged via `combineDetectors.js` into the normalized
+`SensitiveRegion[]` contract), with `redactor.js` consuming that
+contract generically rather than Tier-1-specific output — Tier 3
+(Phase 10, deferred) becomes just another region producer, no redactor
+changes needed.
+
+**Stated limitation, unchanged in kind**: this closes the gap for the
+codebase *as it exists today*. It does not prevent a hypothetical new
+file from being added that imports `fetch` some other way the scanner's
+regex-based check doesn't catch (e.g. via an aliased import or a
+dynamically-constructed call) — the test is a real, repo-wide
+regression guard for the common case, not a formally verified
+guarantee.
+

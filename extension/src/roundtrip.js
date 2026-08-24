@@ -9,10 +9,13 @@
  *
  * Phase 7: the server leg goes through OzerPrivacyClient
  * (detection -> redaction -> gate -> transport) instead of building a
- * SanitizedContext and calling fetch directly here — this closes Threat
- * T9's gap (nothing forcing a code path to use the gate) for this real
- * code path. See extension/test/privacy/ozerPrivacyClient.test.js for
- * the regression test that would catch this being reverted.
+ * SanitizedContext and calling fetch directly here.
+ *
+ * Phase 8: the companion leg ALSO goes through OzerPrivacyClient
+ * (postTypedAction), so this file makes zero direct fetch() calls at
+ * all — enforced by extension/test/architecture/egressEnforcement.test.js,
+ * which scans every file under extension/src/ except
+ * privacy/ozerPrivacyClient.js for a direct fetch() call.
  *
  * @param {{fetch: typeof fetch, serverUrl: string, companionUrl: string}} deps
  * @returns {Promise<{typedAction: object, executionResult: object}>}
@@ -35,15 +38,10 @@ async function runRoundTrip(deps) {
     pageUrlHash,
   });
 
-  const executeResp = await fetch(`${companionUrl}/execute`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(typedAction),
+  const executionResult = await OzerPrivacyClient.postTypedAction(typedAction, {
+    fetch,
+    companionUrl,
   });
-  if (!executeResp.ok) {
-    throw new Error(`companion /execute failed: ${executeResp.status}`);
-  }
-  const executionResult = await executeResp.json();
 
   return { typedAction, executionResult };
 }

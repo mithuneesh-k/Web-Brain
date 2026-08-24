@@ -7,7 +7,11 @@
 importScripts(
   "privacy/patterns.js",
   "privacy/egressGate.js",
+  "detection/regionTypes.js",
   "detection/domDetector.js",
+  "detection/tier1Detector.js",
+  "detection/tier2Detector.js",
+  "detection/combineDetectors.js",
   "redaction/redactor.js",
   "privacy/ozerPrivacyClient.js",
   "roundtrip.js"
