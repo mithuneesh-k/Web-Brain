@@ -117,8 +117,8 @@ Every subsystem should state which metric it serves and how it's measured.
 
 ## Current Privacy Verification Status
 
-**Real browser geometry. Synthetic image capture. No extension
-integration yet.**
+**Real browser geometry. Real captured pixels. Extension integration
+pending.**
 
 Keep those three clauses together. They state, in order, exactly what
 has and has not been proven, and they are the guard against this claim
@@ -128,12 +128,20 @@ Tier 1 and Tier 2 region geometry is verified against real
 browser-rendered geometry, including fractional DPR (`1.25`) and
 viewport-overflow cases.
 
-The verification uses real `getBoundingClientRect()` output from a
-browser-rendered fixture. **The image buffer used in the integration
-test is synthetic**, and Ozer is **not yet integrated into a loaded
-browser extension**. This is therefore evidence that the DOM-to-pixel
-coordinate boundary is correct for the tested cases — **not** a claim of
-full browser-extension end-to-end verification.
+The verification uses real `getBoundingClientRect()` output **and a real
+browser screenshot**, captured in the *same* playwright session so the
+pixels and the geometry provably describe the same render. Redaction is
+applied to those real decoded pixels: the test asserts each sensitive
+field contained multiple distinct colours (rendered glyphs) beforehand
+and exactly one flat colour afterwards, while non-sensitive elements
+stay **byte-identical**.
+
+Ozer is still **not integrated into a loaded browser extension**, and
+the screenshot is produced by playwright rather than by the extension's
+own capture path. This is therefore evidence that the
+DOM-to-pixel-to-redaction boundary is correct on real rendered pixels
+for the tested cases — **not** a claim of full browser-extension
+end-to-end verification.
 
 On the project-authored fixture, Tier 1 and Tier 2 detected all 5
 intended sensitive fields with 0 observed false positives. **This is a
@@ -141,8 +149,8 @@ deterministic integration check, not an independent benchmark** — the
 fixture was written by this project, so the number measures internal
 consistency, not real-world recall.
 
-The next major privacy gap is Tier 3 visual detection and real
-screenshot capture through the WebBrain integration path.
+The next major privacy gap is Tier 3 visual detection and capture
+through the WebBrain integration path (`_withImageDetail()`).
 
 ### Phrases that would be false if written today
 
@@ -150,8 +158,9 @@ Listed explicitly so nobody has to re-derive the boundary:
 
 - "end-to-end verified in the browser" — the extension integration does
   not exist.
-- "verified on real screenshots" — the integration test redacts a
-  synthetic pixel buffer, not a captured image.
+- "end-to-end verified in the extension" — redaction is proven on a
+  real screenshot, but one captured by playwright, not by the
+  extension's own screenshot path.
 - "N% recall/precision" quoted without "on our own fixture".
 - "Tier 3 works" / "faces are redacted" — no face detector exists; the
   demo images use hand-supplied boxes.
@@ -159,7 +168,9 @@ Listed explicitly so nobody has to re-derive the boundary:
   the only guarantee.
 
 Evidence for everything above: `docs/specs/phase10-region-production.md`,
-`extension/test/integration/realPagePipeline.test.js`.
+`extension/test/integration/realPagePipeline.test.js` (geometry), and
+`extension/test/integration/realScreenshotPipeline.test.js` (real
+pixels).
 
 ## Open questions (unresolved)
 
