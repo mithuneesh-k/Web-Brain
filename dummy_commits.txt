@@ -108,3 +108,4 @@ Commit 106: chore(extension): update manifest v3 permissions #8397
 Commit 107: chore(arch): refactor component communication interfaces #3726
 Commit 108: perf(ai): implement model quantization for faster inference #9139
 Commit 109: feat(vision): optimize bounding box inference on edge devices #7916
+Commit 110: feat(client): implement visual feedback for capture actions #1195
