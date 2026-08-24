@@ -103,3 +103,70 @@ or malformed snapshots.
 
 31 new: 18 in `captureEgressGate.test.js`, 13 in
 `snapshotStability.test.js`. Suite total **178** (157 JS + 21 Python).
+
+---
+
+## Phase 12B: the region projection adapter — one pipeline, many producers
+
+`regionProjection.js` — `projectSensitiveRegions(regions, { space })`.
+
+### The invariant it preserves
+
+WebBrain needs only **geometry** to transform pixels (`pixelateDataUrl`
+reads `rect`, never `kind`). Ozer owns the **meaning** of why that
+geometry is sensitive. So `SensitiveRegion` stays canonical and
+WebBrain's four-value `kind` enum is a downstream label — never Ozer's
+privacy model.
+
+### The seven criteria, and how each is met
+
+| # | Criterion | How |
+|---|---|---|
+| 1 | Every valid region projects | `{kind, rect}` out, tested |
+| 2 | No geometry lost or shrunk | origin floors, far edge ceils — a box may only **grow**, never crop |
+| 3 | Unsupported categories not dropped | `CATEGORY_TO_KIND` is **total**; `financial`/`visual_identity` map to `input` |
+| 4 | Canonical fields survive | `canonical[]` returned alongside, same order, unmutated |
+| 5 | No detection, no second privacy decision | never filters by confidence, never reads text — tested with a 0.01-confidence region and a misleading `text` field |
+| 6 | Non-DOM regions accepted | `elementId: null` face box projects identically |
+| 7 | Ambiguous coordinate space fails closed | `space` is **required**, never inferred |
+
+### Criterion 3 is the one that matters most
+
+`financial` and `visual_identity` have no counterpart in WebBrain's
+`password|input|email|phone` enum. The tempting behaviour — drop what
+doesn't map — would silently stop redacting card numbers and faces.
+The mapping is therefore **total**, and the compromise is a *label*,
+not a privacy decision: the region is still redacted, and its true
+category survives on the canonical object.
+
+An unknown category still **throws** rather than defaulting to `input`,
+so a genuinely new category cannot slip through mislabelled.
+
+### Criterion 7: a real coordinate trap
+
+Ozer's `boundingBox` from `domGeometry` is in **image pixels** (DPR
+already applied). WebBrain's `mapRegionsToImage` expects **CSS pixels**
+and scales them. Feeding one into the other double-scales every box, so
+there is deliberately **no default**:
+
+- `space: 'image'` → inject after `mapRegionsToImage`, straight into
+  `pixelateDataUrl`.
+- `space: 'css'` → may travel through `mapRegionsToImage` with the rest.
+
+### The one-pipeline proof
+
+`extension/test/integration/onePipeline.test.js` runs DOM (Tier 1) and
+non-DOM visual (Tier 3) producers together against the **real captured
+screenshot** and asserts: they converge into one region list, one
+projection call handles both without dropping either, and **one**
+redaction pass masks both — while the Save button stays untouched.
+
+A control assertion proves the face pixels are only masked *because* of
+the Tier 3 region: removing that producer leaves them unchanged.
+
+The Tier 3 region is hand-supplied, since no face detector exists. That
+is the point — it proves the **contract** accepts a producer with no DOM
+element, so a real detector drops in later without touching geometry,
+projection, or redaction.
+
+Suite total: **207** (186 JS + 21 Python).
