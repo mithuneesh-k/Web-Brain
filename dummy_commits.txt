@@ -63,3 +63,4 @@ Commit 61: fix(client): resolve popup UI glitch during capture sequence #4911
 Commit 62: fix(execution): resolve timeout issue in headless worker #6930
 Commit 63: chore(prompt): version control system prompts #1224
 Commit 64: perf(ai): implement model quantization for faster inference #7252
+Commit 65: chore(glue): setup structured logging across boundaries #8046
