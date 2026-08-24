@@ -27,11 +27,25 @@ class RedactionError extends Error {
   }
 }
 
-// Categories whose visual content should be obscured but whose presence
-// and shape stay legible (a blurred face still reads as "a face here",
-// which preserves layout understanding for the model). Everything else
-// is flattened, because partial legibility of a credential is a leak.
-const BLUR_CATEGORIES = new Set(["visual_identity"]);
+// Privacy modes.
+//
+//   'strict'     (DEFAULT) — everything is solid-masked, faces included.
+//   'contextual' — visual_identity is blurred instead, preserving "a
+//                  face is here" as layout context for the model.
+//
+// Strict is the default deliberately. Blur and pixelation are NOT
+// irreversible: published work has recovered content from blurred and
+// pixelated imagery. Solid masking is the only guarantee, so the safe
+// behaviour must be what you get when you say nothing. 'contextual' is
+// an explicit, informed opt-in to a weaker guarantee in exchange for
+// better model comprehension — never a silent default.
+const PRIVACY_MODES = new Set(["strict", "contextual"]);
+const DEFAULT_PRIVACY_MODE = "strict";
+
+// Categories eligible for blur *when* contextual mode is chosen.
+// Credentials are never eligible: partial legibility of a secret is a
+// leak, and no layout benefit is worth that.
+const BLUR_ELIGIBLE_CATEGORIES = new Set(["visual_identity"]);
 
 // Minimum radius, and the divisor used to scale radius to the region.
 // A FIXED small radius is a privacy-theatre failure mode: on a large
@@ -131,7 +145,13 @@ function applyBlur(data, source, width, height, rect) {
  * @returns {{width:number, height:number, data:Uint8ClampedArray, applied:object[]}}
  * @throws {RedactionError} if any region cannot be applied (fail-closed)
  */
-function redactImageData(imageData, regions) {
+function redactImageData(imageData, regions, options = {}) {
+  const privacyMode = options.privacyMode || DEFAULT_PRIVACY_MODE;
+  if (!PRIVACY_MODES.has(privacyMode)) {
+    throw new RedactionError(
+      `unknown privacyMode "${privacyMode}" (expected 'strict' or 'contextual')`
+    );
+  }
   if (!imageData || typeof imageData !== "object") {
     throw new RedactionError("imageData is not an object");
   }
@@ -153,7 +173,10 @@ function redactImageData(imageData, regions) {
 
   for (const region of regions) {
     const rect = assertValidBox(region, width, height);
-    const mode = BLUR_CATEGORIES.has(region.category) ? "blur" : "mask";
+    const mode =
+      privacyMode === "contextual" && BLUR_ELIGIBLE_CATEGORIES.has(region.category)
+        ? "blur"
+        : "mask";
     if (mode === "blur") {
       applyBlur(out, source, width, height, rect);
     } else {
@@ -162,11 +185,11 @@ function redactImageData(imageData, regions) {
     applied.push({ id: region.id, elementId: region.elementId, category: region.category, mode, rect });
   }
 
-  return { width, height, data: out, applied };
+  return { width, height, data: out, applied, privacyMode };
 }
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { redactImageData, RedactionError, BLUR_CATEGORIES, blurRadiusFor };
+  module.exports = { redactImageData, RedactionError, BLUR_ELIGIBLE_CATEGORIES, PRIVACY_MODES, DEFAULT_PRIVACY_MODE, blurRadiusFor };
 } else {
   self.redactImageData = redactImageData;
   self.RedactionError = RedactionError;

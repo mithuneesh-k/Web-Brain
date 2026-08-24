@@ -145,3 +145,84 @@ empty regions, audit reporting, and caller-buffer immutability.
 
 Full suite after this phase: **98 tests** (77 JS + 21 Python), all
 passing.
+
+---
+
+# Phase 10 (in progress): DOM → pixel geometry + strict privacy mode
+
+## DOM geometry mapping — IMPLEMENTED, TESTED
+
+`extension/src/detection/domGeometry.js` —
+`domRectToScreenshotBox(rect, options)`.
+
+Converts a `getBoundingClientRect()`-shaped rect (CSS px) into
+screenshot pixel coordinates. 19 tests.
+
+### The coordinate trap, pinned by test
+
+`getBoundingClientRect()` is **viewport-relative** — scroll offset is
+already baked in. For a viewport capture, adding `scrollX/scrollY`
+double-counts and shifts every box by the scroll distance. That is the
+classic bug in this conversion, so `captureMode` is **explicit and
+required to be valid**:
+
+- `captureMode: 'viewport'` (default) — scroll offset is **not** added.
+  Tested with `scrollY: 500` asserting the box does *not* move.
+- `captureMode: 'fullpage'` — scroll offset **is** added, because the
+  image spans the document. Tested separately.
+- Any other value **throws** rather than guessing.
+
+### Other invariants under test
+
+- dpr 1, 2, and fractional (1.5). At fractional DPR the origin is
+  floored and the far edge ceiled, with assertions that **no edge of the
+  element is ever cropped** — under-covering a sensitive box leaves a
+  sliver of the original visible.
+- Clipping at all four image edges.
+- Both `x/y` and `left/top` rect naming (DOMRect exposes both).
+- `padding` expands the box on all four sides to cover anti-aliased
+  glyph edges, clamped to image bounds.
+
+### visible:false vs throw — a deliberate distinction
+
+- **Not visible** (`{visible: false}`): scrolled out of view, below the
+  fold, or zero-sized. Those pixels are genuinely not in the image, so
+  there is nothing to redact. Not an error. (The element's *text* is
+  still handled by Tier 1/2 text redaction — a separate path.)
+- **Throws** (`GeometryError`): NaN/Infinity, missing rect, negative
+  dimensions, invalid DPR, invalid image size, unknown capture mode.
+  A confidently-wrong box is worse than no box: it redacts the wrong
+  pixels and leaves the sensitive ones exposed.
+
+## Privacy modes — strict by default
+
+`redactImageData(imageData, regions, { privacyMode })`:
+
+- **`'strict'` (DEFAULT)** — everything solid-masked, faces included.
+- `'contextual'` — `visual_identity` blurred instead, preserving "a face
+  is here" as layout context.
+- Unknown mode throws.
+
+**Credentials are never blur-eligible in either mode.** Partial
+legibility of a secret is a leak, and no layout benefit justifies it.
+
+Strict is the default deliberately: blur and pixelation are **not**
+irreversible, so the safe behaviour must be what you get when you say
+nothing. `contextual` is an explicit, informed opt-in to a weaker
+guarantee.
+
+The demo now renders both (`screenshot-after-strict.png`,
+`screenshot-after-contextual.png`) so the trade-off is visible rather
+than argued.
+
+## Still not built (unchanged from Phase 9)
+
+`domRectToScreenshotBox` converts a rect that **something must supply**.
+Tier 1/2 still emit `boundingBox: null` — nothing yet calls
+`getBoundingClientRect()` in a content script and threads the result
+through. And faces still have **no detector at all**.
+
+So the pipeline remains: real geometry math, real redaction, **no real
+box producer**. Tier 3 still does not work end-to-end.
+
+Suite after this phase: **120 tests** (99 JS + 21 Python).

@@ -73,7 +73,7 @@ test("visual_identity uses blur, which changes pixels without a flat fill", () =
   }
   const out = redactImageData(img, [
     region({ category: "visual_identity", subtype: "face", boundingBox: { x: 2, y: 2, width: 6, height: 6 } }),
-  ]);
+  ], { privacyMode: "contextual" });
   const [r] = pixelAt(out, 4, 4);
   assert.ok(r > 0 && r < 255, `expected an averaged value, got ${r}`);
 });
@@ -106,7 +106,11 @@ test("blur DESTROYS detail, it does not merely alter pixels", () => {
 
   const before = variance(img);
   const after = variance(
-    redactImageData(img, [region({ category: "visual_identity", subtype: "face", boundingBox: box })])
+    redactImageData(
+      img,
+      [region({ category: "visual_identity", subtype: "face", boundingBox: box })],
+      { privacyMode: "contextual" }
+    )
   );
 
   assert.ok(before > 5000, `test fixture should start high-contrast, got ${before}`);
@@ -126,7 +130,7 @@ test("blur does not bleed the sensitive region's pixels outside its own box", ()
   }
   const out = redactImageData(img, [
     region({ category: "visual_identity", boundingBox: { x: 10, y: 10, width: 20, height: 20 } }),
-  ]);
+  ], { privacyMode: "contextual" });
   // Just outside the box must remain the original background.
   assert.deepEqual(pixelAt(out, 9, 20), [250, 250, 250, 255]);
   assert.deepEqual(pixelAt(out, 30, 20), [250, 250, 250, 255]);
@@ -177,7 +181,7 @@ test("reports what it applied, for privacy metadata and audit", () => {
   const out = redactImageData(img, [
     region({ id: "r1" }),
     region({ id: "r2", category: "visual_identity", subtype: "face", boundingBox: { x: 0, y: 0, width: 2, height: 2 } }),
-  ]);
+  ], { privacyMode: "contextual" });
   assert.equal(out.applied.length, 2);
   assert.deepEqual(out.applied.map((a) => a.mode).sort(), ["blur", "mask"]);
   assert.deepEqual(out.applied.map((a) => a.id).sort(), ["r1", "r2"]);
@@ -188,4 +192,30 @@ test("does not mutate the caller's buffer — the raw screenshot is left intact 
   const originalFirstPixel = pixelAt(img, 3, 3);
   redactImageData(img, [region()]);
   assert.deepEqual(pixelAt(img, 3, 3), originalFirstPixel);
+});
+
+// --- privacy mode: strict is the safe default ---
+
+test("DEFAULT is strict: a face is SOLID-MASKED, not blurred", () => {
+  const img = makeImage(20, 20, [230, 190, 160]);
+  const out = redactImageData(img, [
+    region({ category: "visual_identity", subtype: "face", boundingBox: { x: 4, y: 4, width: 10, height: 10 } }),
+  ]);
+  assert.equal(out.privacyMode, "strict");
+  assert.equal(out.applied[0].mode, "mask");
+  assert.deepEqual(pixelAt(out, 8, 8), [0, 0, 0, 255]);
+});
+
+test("credentials are ALWAYS masked, even in contextual mode", () => {
+  const img = makeImage(20, 20);
+  const out = redactImageData(img, [
+    region({ category: "authentication", subtype: "password", boundingBox: { x: 4, y: 4, width: 10, height: 10 } }),
+  ], { privacyMode: "contextual" });
+  assert.equal(out.applied[0].mode, "mask");
+  assert.deepEqual(pixelAt(out, 8, 8), [0, 0, 0, 255]);
+});
+
+test("FAIL-CLOSED: an unknown privacyMode throws rather than falling back", () => {
+  const img = makeImage(10, 10);
+  assert.throws(() => redactImageData(img, [region()], { privacyMode: "loose" }), RedactionError);
 });

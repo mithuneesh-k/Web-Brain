@@ -147,21 +147,27 @@ function main() {
   fs.mkdirSync(outDir, { recursive: true });
 
   const before = buildMockScreenshot();
-  const after = redactImageData(before, REGIONS);
+  const strict = redactImageData(before, REGIONS);                              // default
+  const contextual = redactImageData(before, REGIONS, { privacyMode: "contextual" });
 
-  const beforePath = path.join(outDir, "screenshot-before.png");
-  const afterPath = path.join(outDir, "screenshot-after-ozer.png");
-  fs.writeFileSync(beforePath, encodePNG(before));
-  fs.writeFileSync(afterPath, encodePNG(after));
+  const paths = {
+    before: path.join(outDir, "screenshot-before.png"),
+    strict: path.join(outDir, "screenshot-after-strict.png"),
+    contextual: path.join(outDir, "screenshot-after-contextual.png"),
+  };
+  fs.writeFileSync(paths.before, encodePNG(before));
+  fs.writeFileSync(paths.strict, encodePNG(strict));
+  fs.writeFileSync(paths.contextual, encodePNG(contextual));
 
-  console.log("Ozer Tier 3 visual redaction demo");
-  console.log(`  image           ${before.width}x${before.height}`);
-  console.log(`  regions applied ${after.applied.length}`);
-  for (const a of after.applied) {
-    console.log(`    ${a.mode.padEnd(5)} ${a.category.padEnd(16)} ${a.id}`);
+  console.log("Ozer visual redaction demo");
+  console.log(`  image ${before.width}x${before.height}`);
+  for (const [label, res] of [["strict (default)", strict], ["contextual", contextual]]) {
+    console.log(`  ${label}:`);
+    for (const a of res.applied) {
+      console.log(`    ${a.mode.padEnd(5)} ${a.category.padEnd(16)} ${a.id}`);
+    }
   }
-  console.log(`  before -> ${beforePath}`);
-  console.log(`  after  -> ${afterPath}`);
+  for (const [k, v] of Object.entries(paths)) console.log(`  ${k.padEnd(11)} -> ${v}`);
 }
 
 main();
