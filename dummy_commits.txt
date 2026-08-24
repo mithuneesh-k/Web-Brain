@@ -98,3 +98,4 @@ Commit 96: fix(prompt): mitigate hallucination in structured JSON parsing #5077
 Commit 97: fix(browser): handle shadow DOM boundaries correctly #6523
 Commit 98: feat(arch): introduce unified event bus for modularity #2468
 Commit 99: feat(orchestration): implement fallback mechanism for API timeouts #6258
+Commit 100: feat(redaction): implement dynamic visual blurring for image regions #8595
