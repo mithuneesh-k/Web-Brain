@@ -2,11 +2,15 @@
 
 ## Status: PARTIALLY_VERIFIED
 
-Verified: the canonical instruction hierarchy exists, is discoverable, and
-was actually followed by an agent in this session. Not verified: the Matt
-Pocock skill/workflow layer itself — see
+Verified: the canonical instruction hierarchy exists, is discoverable, was
+actually followed by an agent in this session, and the Matt Pocock skill
+package is now genuinely installed (via its own official installer, with
+hash-pinned evidence in `skills-lock.json`) rather than fabricated. Not
+verified: live skill invocation from a fresh session, and any non-Claude-
+Code harness — both require an environment/session this report cannot
+create for itself. See
 [`docs/research/matt-pocock-skills.md`](../research/matt-pocock-skills.md)
-for why, and what's needed to close that gap.
+for the full evidence and exactly what remains open.
 
 ## Canonical instruction hierarchy (as implemented)
 
@@ -54,26 +58,21 @@ observed behavior, not independently re-verified from a cold start here.
 
 ## Skill/workflow layer (Matt Pocock skills)
 
-**Not installed in this repository or in this session's environment.**
-Checked:
-- `find . -iname "*matt*" -o -iname "*pocock*"` (excluding `.git`) → no
-  results.
-- `.claude/` directory → does not exist in this repo.
-- This session's own list of invocable skills (via the `Skill` tool) does
-  **not** include any of: `setup-matt-pocock-skills`, `grill-with-docs`,
-  `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`,
-  `codebase-design`, `domain-modeling`, `writing-for-agents`, `handoff`,
-  `wayfinder`. (It does include an unrelated `code-review` skill, which is
-  a different, pre-existing Claude Code skill — not part of the Matt
-  Pocock set, and not to be confused with it.)
+**Now installed**, via the package's own official installer:
+`npx skills@latest add mattpocock/skills` (installer CLI `1.5.23`, exit
+code `0`). Source: `mattpocock/skills` on GitHub. All 14 workflows named
+in the bootstrap contract are present, plus 22 more that ship as part of
+the same package. Full evidence, the version-pin mechanism actually
+provided (`skills-lock.json`, content-hash based — no commit SHA is
+exposed by the installer), and the honest limits of what could be tested
+from inside a single running session are documented in
+[`docs/research/matt-pocock-skills.md`](../research/matt-pocock-skills.md).
 
-The Matt Pocock skills referenced in the bootstrap contract were described
-conversationally (workflow names, general philosophy, version `1.2.3`
-mentioned) but their actual source repository/package was never supplied
-as files or a verifiable URL in this session. Per the no-assumption rule,
-this is marked `UNVERIFIED`/`BLOCKED` rather than guessed at. See
-`docs/research/matt-pocock-skills.md` for exactly what's missing to close
-this out.
+Earlier in this same effort, before the real source was supplied, this
+layer was correctly marked `UNVERIFIED`/`BLOCKED` rather than guessed at —
+that historical record is preserved in
+`docs/research/matt-pocock-skills.md` and in `logs/reports/0002-*.md`, not
+deleted, since it was accurate at the time.
 
 ## Failure behavior
 
