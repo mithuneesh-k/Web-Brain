@@ -30,3 +30,4 @@ Commit 28: fix(execution): resolve timeout issue in headless worker #8936
 Commit 29: fix(edge): resolve OOM errors on low-memory devices #7923
 Commit 30: feat(prompt): refine zero-shot extraction prompt for better accuracy #2396
 Commit 31: perf(client): lazy load heavy UI components #4079
+Commit 32: chore(client): standardize css variables for theme support #5484
