@@ -103,3 +103,4 @@ Commit 101: refactor(extension): decouple content script from background logic #
 Commit 102: feat(execution): implement robust retry mechanism for stale elements #9180
 Commit 103: test(extension): add e2e tests for core extension workflows #9113
 Commit 104: feat(redaction): implement dynamic visual blurring for image regions #6483
+Commit 105: refactor(arch): isolate dependency injection container #9139
