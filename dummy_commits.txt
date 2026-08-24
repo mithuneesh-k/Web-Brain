@@ -33,3 +33,4 @@ Commit 31: feat(vision): add temporal smoothing for tracking consistency #4227
 Commit 32: feat(client): implement visual feedback for capture actions #5629
 Commit 33: feat(client): add settings panel for user preferences #5313
 Commit 34: feat(prompt): refine zero-shot extraction prompt for better accuracy #1850
+Commit 35: feat(vision): optimize bounding box inference on edge devices #6491
