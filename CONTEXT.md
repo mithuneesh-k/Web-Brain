@@ -157,8 +157,18 @@ Phases 7/9/10 duplicates it. Ozer's best-evidenced remaining gap is the
 **text/context path** — credentials reach the provider in conversation
 history with only a prompt-level mitigation — plus fail-closed egress
 enforcement. Options and evidence:
-`docs/research/webbrain-existing-redaction.md`. Do not write
-integration code before choosing one.
+`docs/research/webbrain-existing-redaction.md`, and the boundary audit
+`docs/research/phase11a-privacy-boundary-audit.md`.
+
+**Audit headline: WebBrain's screenshot redaction is OFF BY DEFAULT**
+(`agent.js:606`), and when enabled it is *more* rigorous than Ozer's —
+fail-closed, with a TOCTOU guard (refuses if the page mutates between
+region collection and capture) that Ozer's threat model lacks. So
+Ozer's opportunity is **policy, defaults, the text path, and
+independent verification** — not building a better redactor. The text
+path (element labels, AX tree, tool results, conversation history) is
+protected only by `_wrapUntrusted()`, a prompt-injection boundary, not
+a privacy control.
 
 Also established there: `_withImageDetail()` is **synchronous**, so it
 is the place to **assert** sanitisation, not to perform it. Redaction
