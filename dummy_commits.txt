@@ -59,3 +59,4 @@ Commit 57: fix(edge): resolve OOM errors on low-memory devices #2131
 Commit 58: perf(redaction): optimize DOM traversal during masking pass #6816
 Commit 59: refactor(vision): modularize frame extraction logic #1428
 Commit 60: chore(orchestration): upgrade underlying LLM client library #6864
+Commit 61: fix(client): resolve popup UI glitch during capture sequence #4911
