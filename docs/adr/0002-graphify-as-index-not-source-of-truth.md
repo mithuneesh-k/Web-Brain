@@ -77,3 +77,35 @@ See `docs/research/graphify.md` for full detail. Key facts:
   runs `graphify install`/`graphify extract` should reference this ADR
   and confirm the `.graphifyignore` precondition before doing anything
   else.
+
+## Update (2026-08-24): installation completed, real implementation differs from assumptions above
+
+Graphify was installed in a follow-up session (`uv tool install graphifyy`,
+version `0.4.20` — well behind the `0.9.48` latest on PyPI at install
+time). Full evidence in `docs/research/graphify.md`'s "Installation and
+Runtime Evidence" section and `docs/architecture/graphify-integration.md`.
+Two assumptions in this ADR's original text did not hold at the version
+that actually installed, and are corrected here rather than silently:
+
+1. **There is no `graphify extract`/`--code-only` command in this
+   version.** The genuinely local, no-LLM path is `graphify update
+   <path>`, and it is **code-file only** — it cannot index Markdown at
+   all. Since Ozer currently has no source code, this path currently has
+   nothing to do (`No code files found`), which is itself a valid,
+   verified-local result, not a failure.
+2. **Skill installation is global on this machine, not project-scoped**
+   (`graphify install` has no `--project` flag in this version, unlike
+   the README). Only the "always use the graph" wiring
+   (`graphify claude install` → `CLAUDE.md` section + `.claude/settings.json`
+   hook) is genuinely repo-scoped.
+
+The core decision in this ADR is **unchanged**: graphify remains
+index-only, git+Markdown remain canonical, `logs/` remains excluded. What
+changed is *how* Option A is actually achievable with the installed
+version — indexing Markdown (`AGENTS.md`, `CONTEXT.md`, `docs/`) requires
+the in-session `/graphify` skill (an LLM-backed pass using the invoking
+IDE session's own model), not a separate headless local command, since
+this version has no such command. That specific step was not performed
+in the installation session — it requires a fresh Claude Code session to
+even discover the newly-installed skill (see
+`docs/research/graphify.md`, "Cross-Agent Testing").

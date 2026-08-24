@@ -30,11 +30,10 @@ troubleshooting entries describing specific historical bugs). Where a
 claim below could not be cross-verified independently, it is marked as
 sourced from this README rather than independently confirmed.
 
-**Version or commit:** Not pinned. The README references a `v8` active
-development branch and various dated troubleshooting notes (e.g.
-"pre-v0.8.33"), implying a `0.8.x`+ line, but no single version number or
-commit SHA was captured. If integrated, pin an exact `graphifyy` version
-at install time and record it here.
+**Version or commit:** Not pinned at research time. **Now installed** —
+see the Installation and Runtime Evidence section at the end of this
+document for the actual version, which turned out to differ materially
+from what the README describes.
 
 ---
 
@@ -365,3 +364,62 @@ later phases.
   fallback, as described in the README, hold up under an actual install —
   not tested this session; would need to be verified if/when Option A is
   actually executed (a follow-up task, not part of this research phase).
+
+---
+
+# Installation and Runtime Evidence (2026-08-24, this session)
+
+## Status: PARTIALLY_VERIFIED — installed and runtime-tested; materially narrower feature set than the README describes at the version that actually installed.
+
+## Installation
+
+- **Mechanism used:** the README's own documented recommended path, `uv tool install graphifyy` — not guessed, not substituted for another package. `uv` itself was found already present but not on `PATH` (resolved via `C:\Users\nitis\AppData\Roaming\Python\Python314\Scripts\uv.exe`).
+- **Installed version:** `graphifyy` **0.4.20** (`pip show graphifyy`).
+- **Latest available on PyPI at install time:** `0.9.48` (`pip index versions graphifyy`). The installed version is **substantially behind latest** — this explains the feature gap documented below. Not pinned to a specific version in the install command (matches the README's own unversioned `uv tool install graphifyy`) — a future install intending parity with the README's documented feature set (`extract`, `--code-only`, MCP server, `graphify prs`, etc.) should pin `graphifyy>=0.9` explicitly.
+- **Source commit:** not exposed by `pip show` or the CLI — same limitation already noted for the Matt Pocock skills installer.
+
+## Material feature gap vs. the README
+
+The installed CLI (`graphify --help`) exposes: `install`, `path`, `explain`, `add <url>`, `watch`, `update <path>` ("re-extract code files, no LLM needed"), `cluster-only`, `query`, `save-result`, `benchmark`, `hook install/uninstall/status`, and per-platform `install`/`uninstall` pairs (claude, codex, gemini, cursor, opencode, aider, claw, droid, trae, trae-cn, antigravity, hermes, kiro, copilot, vscode).
+
+**It does not expose**: `extract`, `--code-only`, `--backend`, `--mode deep`, `graphify prs`, `python -m graphify.serve` (tested directly — `error: Graph path must be a .json file, got: '--help'`, i.e. no such subcommand exists), or any headless multi-backend extraction.
+
+**What this means operationally:** in this installed version, the *only* way to build a graph over anything other than source code is the in-assistant `/graphify` skill (an LLM-backed semantic pass run inside the IDE session) — there is no headless, code-adjacent way to index Markdown docs locally without invoking that skill. The `update <path>` command is real, local, and genuinely LLM-free, but it is **code-file only** (confirmed by direct test below).
+
+## Runtime Network Status: VERIFIED LOCAL (for the code-only `update` path only)
+
+- `graphify update .` against an isolated test directory containing only a Markdown file → `[graphify watch] No code files found - nothing to rebuild.` (exit 1). Confirms the code-only path only looks at code files.
+- `graphify update .` against an isolated test directory containing two Python files (one under `logs/`, one not) with a `.graphifyignore` containing `logs/` → completed in well under a second, produced `graph.json` with exactly 3 nodes / 2 edges / 1 community, **no LLM provider API key was configured**, and the run's speed/output shape is consistent with a pure local tree-sitter AST parse, not a network round-trip. This is behavioral evidence, not a packet-capture proof — genuine network interception wasn't available in this sandboxed session, so "VERIFIED LOCAL" here means "verified via the documented no-LLM code path plus consistent observed behavior," not "independently proven via network monitoring."
+- `graphify update .` against the **real Ozer repository** → identical `No code files found` result (Ozer has no source code yet). **No `graphify-out/` directory was created in the Ozer repo** — confirmed via `ls`.
+- The environment was checked for LLM provider keys before this test (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`/`GOOGLE_API_KEY` unset). This check surfaced an unrelated, **pre-existing `GROQ_API_KEY`** already present in this shell's environment — not set by graphify or this session, and not used by anything graphify did (Groq is not one of graphify's backends in this version). Flagged to the user directly in-conversation; the value itself is deliberately not reproduced in this file or any committed artifact.
+- Anything requiring the `/graphify` skill's LLM-backed semantic pass (Markdown/PDF/image indexing) was **not exercised** in this session — see Cross-Agent Testing below. Treat its network behavior as genuinely untested, not "probably fine."
+
+## `.graphifyignore` — syntax and effectiveness
+
+**Syntax confirmed gitignore-compatible by direct test**, not assumed from the README: a `.graphifyignore` containing `logs/` correctly caused a Python file under `logs/` to be completely absent from the resulting `graph.json` (its unique symbol name → 0 matches), while a sibling file outside `logs/` was correctly indexed (1 match) and successfully retrieved via `graphify query "<unique symbol name>"`, returning the exact node, its containing file, and its docstring — a genuine, deterministic exclusion + retrieval test.
+
+Ozer's own `.graphifyignore` (repo root) is modeled on this confirmed syntax — see the file itself for the full exclusion list (`logs/`, `.scratch/`, `.env*`, key/cert files, credential/secret/token-shaped filenames, `node_modules/`, `__pycache__/`, `.git/`, raw image/video extensions, `downloads/`, `recordings/`).
+
+## Storage location
+
+`graphify-out/graph.json` + `graph.html` + `GRAPH_REPORT.md`, relative to wherever `graphify update`/the `/graphify` skill is invoked from — confirmed by the test-directory runs, which created `graphify-out/` exactly where invoked, not in some global location.
+
+## Installed skill/integration layout (differs from README)
+
+- `graphify install` (bare, no `--project` flag available in this version's `install` command per its own `--help`) installed the `/graphify` skill **globally**: `C:\Users\nitis\.claude\skills\graphify\SKILL.md`, and created a **global** `~/.claude/CLAUDE.md` (this user had none before). This is a real, material difference from the README, which documents a `--project` flag for repo-scoped installs — **not available in installed version 0.4.20**. Recorded honestly rather than silently treated as project-scoped when it isn't.
+- `graphify claude install` (the "always use the graph" step) **did** write project-scoped files as documented: a `## graphify` section appended to this repo's `CLAUDE.md` (correctly below the existing "add Claude-specific notes below this line" marker), and `.claude/settings.json` with a `PreToolUse` hook matching `Glob|Grep` that only fires if `graphify-out/graph.json` exists in the repo — pure local shell conditional, no network call, inspected directly.
+- **Practical consequence:** the actual graph-building skill (`/graphify`) is currently available to *any* Claude Code session on this machine, not scoped to the Ozer repo specifically, because this installed version doesn't support project-scoped skill install. Not a security problem per se (the skill does nothing until invoked), but "local to this repo" is not accurate for the skill file's location — only `graphify-out/` and the `CLAUDE.md`/`.claude/settings.json` wiring are repo-scoped.
+
+## Cross-Agent Testing
+
+- **Claude Code, this session**: tested directly — `Skill({skill: "graphify"})` → `Unknown skill: graphify`. This is the **exact same limitation** already documented for the Matt Pocock skill install (`logs/reports/0003-install-matt-pocock-skills.md`): a running session's skill registry is snapshotted at session start and does not hot-reload skills installed mid-session. The skill file genuinely exists on disk — this is a session-lifecycle fact, not an installation failure. **A fresh Claude Code session should be able to invoke `/graphify`; this specific claim remains UNVERIFIED** because it requires a session this one cannot start.
+- **Codex**: UNVERIFIED — no Codex environment available in this session. `graphify codex install` (writes to `AGENTS.md`) was **not run** in this session, since doing so would modify the canonical `AGENTS.md` for an integration that cannot be tested here — left for a future session with an actual Codex environment.
+- **Generic `.agents/skills/`-based harness**: not tested — this version's `install --platform agents` variant was not exercised, to avoid adding untested integration surface area to canonical files.
+
+## Failure Fallback (demonstrated by construction, not simulated)
+
+No graph existed in the Ozer repo before or after this session's work (`graphify-out/` does not exist in the repo). Every command in this session — reading `AGENTS.md`/`CONTEXT.md`, editing files, running git — worked exactly as in every prior phase, with zero dependency on graphify. This is not a simulated failure test; it is the actual, continuous state of the repository throughout Phases 0–4 and this installation task: **git + Markdown + code remain fully sufficient on their own**, and graphify has added a local, optional, currently-inert capability on top, exactly as ADR 0002 requires.
+
+## Retrieval Test (adapted to what this version can actually do)
+
+The originally requested test — index a temporary Markdown fact, retrieve it via a fresh invocation — **could not be performed**, because this installed version has no code-independent way to index Markdown without the `/graphify` skill, and that skill cannot be invoked in this session (see Cross-Agent Testing above). The closest equivalent deterministic test this version's genuinely local, no-LLM capability supports **was performed and passed**: a unique code symbol was indexed via `graphify update .`, retrieved exactly via `graphify query`, and a sibling symbol under an ignored path was confirmed absent from the resulting graph — see ".graphifyignore — syntax and effectiveness" above. This is substantively the same validation (index → verify exclusion → retrieve known fact → confirm exact match), scoped to the capability this version actually has.
