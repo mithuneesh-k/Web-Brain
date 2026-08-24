@@ -47,3 +47,4 @@ Commit 45: refactor(vision): modularize frame extraction logic #4923
 Commit 46: refactor(arch): centralize configuration management #7825
 Commit 47: feat(extension): implement background service worker for state sync #6460
 Commit 48: refactor(vision): modularize frame extraction logic #3941
+Commit 49: test(vision): benchmark new segmentation architecture #7721
