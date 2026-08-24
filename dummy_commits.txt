@@ -90,3 +90,4 @@ Commit 88: fix(prompt): mitigate hallucination in structured JSON parsing #7908
 Commit 89: perf(edge): reduce latency in frame processing pipeline #5137
 Commit 90: perf(edge): reduce latency in frame processing pipeline #7895
 Commit 91: chore(automation): update playwright dependencies #3795
+Commit 92: test(extension): add e2e tests for core extension workflows #4278
