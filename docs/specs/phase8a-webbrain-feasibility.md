@@ -1,6 +1,21 @@
 # Phase 8A: WebBrain Integration Feasibility Analysis
 
-## Status: analysis complete, DECISION NOT YET MADE — no implementation, no code imported. Awaiting a human decision on the licensing question (see "The licensing constraint").
+## Status: analysis complete. **DECISION MADE — see [ADR 0005](../adr/0005-webbrain-as-agent-ozer-as-privacy-layer.md).** No implementation, no code imported.
+
+**The decision differs from this document's own recommendation, and the
+correction matters.** This analysis recommended Option C (proxy) as the
+*primary* privacy mechanism while simultaneously identifying, in its own
+Option C weakness list, that a proxy is "configuration-dependent, not
+enforced — if a user points WebBrain straight at a cloud provider, Ozer
+is bypassed entirely." Recommending a bypassable mechanism as primary
+contradicted the SIH requirement to sanitize before *any* network
+request. ADR 0005 corrects this: **the local privacy gate is primary,
+the proxy is defense in depth.** The option analysis below is retained
+unedited as the reasoning of record; read it alongside ADR 0005, not
+instead of it.
+
+Distribution licensing remains unresolved (see "The licensing
+constraint" and ADR 0005's open risks).
 
 ## Problem
 Ozer has built a working privacy pipeline (Tier 1 + Tier 2 detection,

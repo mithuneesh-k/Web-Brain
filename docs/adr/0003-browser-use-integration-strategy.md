@@ -1,8 +1,23 @@
 # ADR 0003: browser-use integration strategy — adapter/companion architecture
 
 ## Status
-Accepted (architecture/decision only — no implementation performed in
-this phase)
+**SUPERSEDED IN PART** by
+[ADR 0005](./0005-webbrain-as-agent-ozer-as-privacy-layer.md)
+(2026-08-24).
+
+- **Superseded**: the selection of browser-use as Ozer's downstream
+  execution engine. WebBrain now fills that role; browser-use was never
+  installed or imported, so nothing needs unwinding.
+- **Still in force**: this ADR's privacy-bypass analysis and the
+  boundary principle it established — that an upstream agent's default
+  vision/extraction paths forward raw content to an LLM with no
+  sanitization, and must therefore sit *downstream* of Ozer's gate and
+  never receive raw screenshots. Phase 8A found WebBrain does the
+  functionally equivalent thing for credentials via a prompt-level
+  mitigation, so the same discipline applies to the new upstream.
+
+Original status: Accepted (architecture/decision only — no
+implementation performed in this phase)
 
 ## Date
 2026-08-24
