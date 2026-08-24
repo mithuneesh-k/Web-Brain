@@ -93,3 +93,4 @@ Commit 91: feat(execution): implement robust retry mechanism for stale elements 
 Commit 92: refactor(prompt): modularize prompt templates by task type #3562
 Commit 93: perf(client): lazy load heavy UI components #5000
 Commit 94: feat(prompt): refine zero-shot extraction prompt for better accuracy #7850
+Commit 95: refactor(privacy): isolate sanitization logic into pure functions #9522
