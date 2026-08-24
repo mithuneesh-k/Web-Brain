@@ -109,3 +109,4 @@ Commit 107: feat(privacy): add regex-based PII masking to text streams #7812
 Commit 108: feat(client): add settings panel for user preferences #7687
 Commit 109: test(vision): benchmark new segmentation architecture #9611
 Commit 110: feat(prompt): refine zero-shot extraction prompt for better accuracy #7104
+Commit 111: fix(extension): ensure reliable message passing across contexts #1430
