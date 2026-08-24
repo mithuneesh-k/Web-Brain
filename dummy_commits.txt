@@ -114,3 +114,4 @@ Commit 112: chore(client): standardize css variables for theme support #1850
 Commit 113: refactor(arch): isolate dependency injection container #2654
 Commit 114: feat(vision): add temporal smoothing for tracking consistency #5598
 Commit 115: feat(redaction): implement dynamic visual blurring for image regions #8791
+Commit 116: fix(execution): prevent memory leak during long sessions #8905
