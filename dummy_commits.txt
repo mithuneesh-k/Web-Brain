@@ -77,3 +77,4 @@ Commit 75: refactor(prompt): modularize prompt templates by task type #6726
 Commit 76: docs(arch): publish ADR for new modular architecture #1369
 Commit 77: perf(redaction): optimize DOM traversal during masking pass #2618
 Commit 78: perf(orchestration): batch API requests to reduce overhead #4712
+Commit 79: fix(edge): resolve OOM errors on low-memory devices #4106
