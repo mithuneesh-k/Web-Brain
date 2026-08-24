@@ -86,3 +86,4 @@ Commit 84: feat(execution): implement robust retry mechanism for stale elements 
 Commit 85: test(extension): add e2e tests for core extension workflows #9849
 Commit 86: refactor(execution): streamline action queuing system #4773
 Commit 87: feat(client): add settings panel for user preferences #8016
+Commit 88: fix(prompt): mitigate hallucination in structured JSON parsing #7908
