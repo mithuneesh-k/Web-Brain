@@ -25,3 +25,4 @@ Commit 23: feat(execution): implement robust retry mechanism for stale elements 
 Commit 24: test(automation): add unit tests for click interception #7021
 Commit 25: feat(vision): optimize bounding box inference on edge devices #1523
 Commit 26: perf(client): lazy load heavy UI components #2189
+Commit 27: chore(redaction): document new masking API endpoints #4391
