@@ -85,3 +85,4 @@ Commit 83: feat(orchestration): implement fallback mechanism for API timeouts #3
 Commit 84: fix(browser): handle shadow DOM boundaries correctly #9002
 Commit 85: chore(extension): update manifest v3 permissions #2915
 Commit 86: refactor(vision): modularize frame extraction logic #8917
+Commit 87: fix(extension): ensure reliable message passing across contexts #5729
