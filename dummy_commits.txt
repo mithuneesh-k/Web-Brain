@@ -5,3 +5,4 @@ Commit 3: feat(vision): optimize bounding box inference on edge devices #2248
 Commit 4: perf(redaction): optimize DOM traversal during masking pass #1374
 Commit 5: chore(automation): update playwright dependencies #5670
 Commit 6: refactor(prompt): modularize prompt templates by task type #3689
+Commit 7: feat(orchestration): add telemetry for prompt execution latency #2770
