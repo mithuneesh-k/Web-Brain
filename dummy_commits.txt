@@ -94,3 +94,4 @@ Commit 92: test(extension): add e2e tests for core extension workflows #4278
 Commit 93: feat(client): implement visual feedback for capture actions #9795
 Commit 94: feat(redaction): add support for user-defined redaction rules #4966
 Commit 95: chore(glue): setup structured logging across boundaries #1783
+Commit 96: chore(privacy): update compliance audit logging #6453
