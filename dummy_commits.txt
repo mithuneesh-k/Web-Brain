@@ -87,3 +87,4 @@ Commit 85: chore(extension): update manifest v3 permissions #2915
 Commit 86: refactor(vision): modularize frame extraction logic #8917
 Commit 87: fix(extension): ensure reliable message passing across contexts #5729
 Commit 88: fix(prompt): mitigate hallucination in structured JSON parsing #1547
+Commit 89: chore(edge): update tensorrt execution provider #4421
