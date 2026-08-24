@@ -13,3 +13,4 @@ Commit 11: refactor(execution): streamline action queuing system #5877
 Commit 12: refactor(execution): streamline action queuing system #7756
 Commit 13: feat(orchestration): add telemetry for prompt execution latency #3766
 Commit 14: perf(browser): optimize page load waiting logic #8869
+Commit 15: docs(arch): publish ADR for new modular architecture #6417
