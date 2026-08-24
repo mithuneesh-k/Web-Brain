@@ -116,3 +116,4 @@ Commit 114: feat(vision): add temporal smoothing for tracking consistency #5598
 Commit 115: feat(redaction): implement dynamic visual blurring for image regions #8791
 Commit 116: fix(execution): prevent memory leak during long sessions #8905
 Commit 117: feat(ai): integrate lightweight object detection model #3374
+Commit 118: fix(prompt): mitigate hallucination in structured JSON parsing #4444
