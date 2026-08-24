@@ -66,3 +66,4 @@ Commit 64: fix(browser): handle shadow DOM boundaries correctly #6944
 Commit 65: refactor(extension): decouple content script from background logic #5565
 Commit 66: feat(vision): optimize bounding box inference on edge devices #3181
 Commit 67: feat(vision): optimize bounding box inference on edge devices #7451
+Commit 68: chore(orchestration): upgrade underlying LLM client library #4358
