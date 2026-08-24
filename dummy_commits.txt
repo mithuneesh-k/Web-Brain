@@ -3,3 +3,4 @@ Commit 1: chore(edge): update tensorrt execution provider #3706
 Commit 2: feat(client): implement visual feedback for capture actions #7086
 Commit 3: feat(vision): optimize bounding box inference on edge devices #2248
 Commit 4: perf(redaction): optimize DOM traversal during masking pass #1374
+Commit 5: chore(automation): update playwright dependencies #5670
