@@ -121,3 +121,4 @@ Commit 119: fix(execution): resolve timeout issue in headless worker #8304
 Commit 120: chore(edge): update tensorrt execution provider #8242
 Commit 121: fix(edge): resolve OOM errors on low-memory devices #8271
 Commit 122: fix(extension): ensure reliable message passing across contexts #9200
+Commit 123: feat(browser): automate DOM traversal for context extraction #6321
