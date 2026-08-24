@@ -79,3 +79,4 @@ Commit 77: refactor(arch): centralize configuration management #8950
 Commit 78: refactor(privacy): isolate sanitization logic into pure functions #6069
 Commit 79: fix(browser): handle shadow DOM boundaries correctly #7718
 Commit 80: perf(redaction): optimize DOM traversal during masking pass #3955
+Commit 81: chore(automation): update playwright dependencies #4647
