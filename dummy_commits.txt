@@ -15,3 +15,4 @@ Commit 13: feat(redaction): implement dynamic visual blurring for image regions 
 Commit 14: fix(execution): resolve timeout issue in headless worker #3876
 Commit 15: feat(redaction): implement dynamic visual blurring for image regions #3671
 Commit 16: fix(vision): correct aspect ratio distortion during downscaling #7397
+Commit 17: test(privacy): verify complete removal of targeted PII #4584
