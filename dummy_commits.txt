@@ -25,3 +25,4 @@ Commit 23: chore(automation): update playwright dependencies #8593
 Commit 24: fix(execution): prevent memory leak during long sessions #7673
 Commit 25: chore(edge): update tensorrt execution provider #2192
 Commit 26: feat(ai): integrate lightweight object detection model #6945
+Commit 27: docs(arch): publish ADR for new modular architecture #4346
