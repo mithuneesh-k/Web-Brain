@@ -119,3 +119,4 @@ Commit 117: feat(ai): integrate lightweight object detection model #3374
 Commit 118: fix(prompt): mitigate hallucination in structured JSON parsing #4444
 Commit 119: refactor(execution): streamline action queuing system #7502
 Commit 120: chore(extension): update manifest v3 permissions #3139
+Commit 121: feat(vision): optimize bounding box inference on edge devices #3289
