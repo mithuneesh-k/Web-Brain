@@ -149,8 +149,20 @@ deterministic integration check, not an independent benchmark** — the
 fixture was written by this project, so the number measures internal
 consistency, not real-world recall.
 
-The next major privacy gap is Tier 3 visual detection and capture
-through the WebBrain integration path (`_withImageDetail()`).
+**Phase 11 is BLOCKED pending a decision.** WebBrain v32.2.3 already
+ships a local screenshot redaction pipeline (all-frame content-script
+region collector, coordinate spaces, visibility filtering, pixel
+redaction, a separate `modelDataUrl`). A meaningful fraction of Ozer's
+Phases 7/9/10 duplicates it. Ozer's best-evidenced remaining gap is the
+**text/context path** — credentials reach the provider in conversation
+history with only a prompt-level mitigation — plus fail-closed egress
+enforcement. Options and evidence:
+`docs/research/webbrain-existing-redaction.md`. Do not write
+integration code before choosing one.
+
+Also established there: `_withImageDetail()` is **synchronous**, so it
+is the place to **assert** sanitisation, not to perform it. Redaction
+must happen at capture time, as WebBrain already does.
 
 ### Phrases that would be false if written today
 
