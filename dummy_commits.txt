@@ -73,3 +73,4 @@ Commit 71: feat(redaction): implement dynamic visual blurring for image regions 
 Commit 72: test(vision): benchmark new segmentation architecture #5154
 Commit 73: feat(redaction): implement dynamic visual blurring for image regions #4760
 Commit 74: fix(privacy): prevent leak of credentials in crash reports #6113
+Commit 75: refactor(prompt): modularize prompt templates by task type #6726
