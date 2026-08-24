@@ -136,7 +136,10 @@ Real provider (cloud VLM) — or refuse to forward, fail-closed
      what the SIH problem statement actually requires, but it is a
      weaker claim than "never captured at all."
   3. Ozer would need to parse/redact base64 images inside `image_url`
-     blocks for Tier 3 — viable, but real work.
+     blocks for Tier 3 — viable (confirmed: `openai.js` does forward
+     them), but real work, **and contingent on Ozer's proxy being
+     configured under a vision-matching model name** or WebBrain strips
+     the images first. See open question 4.
 - **Verdict**: recommended starting point. Best ratio of seam quality
   to license and maintenance risk.
 
@@ -187,11 +190,21 @@ dependency added. Nothing from WebBrain has entered `C:\Projects\Ozer`.
 3. Can `webbrain-vl-2-450M-onnx` be invoked independently of WebBrain's
    agent loop? If yes, Ozer's Tier 3 may be able to reuse WebBrain's
    WebGPU stack instead of building a parallel one.
-4. Does WebBrain send `image_url` blocks to *custom* OpenAI-compatible
-   endpoints the same way it does to first-party ones? Option C's Tier 3
-   story depends on this and it was **not verified** this phase.
-5. Is `chat()` called from one chokepoint or many? Only matters if
-   A or B is chosen.
+4. ~~Does WebBrain send `image_url` blocks to custom OpenAI-compatible
+   endpoints?~~ **ANSWERED — yes, but gated.** `openai.js` forwards
+   `image_url` blocks (transforming them to `input_image`), but
+   `agent.js:18609` strips all images when `provider.supportsVision` is
+   false, and for custom endpoints that flag is resolved by **model-name
+   sniffing** (`openai.js:135`). **Option C requires Ozer's proxy to
+   advertise a vision-matching model identity (or use the `visionMode`
+   override), or screenshots will be stripped before reaching Ozer** —
+   Tier 3 would then silently have nothing to redact while text tiers
+   kept working. Configuration requirement, not a blocker. Full detail
+   and quoted source in `docs/research/webbrain.md`.
+5. ~~Is `chat()` called from one chokepoint or many?~~ **ANSWERED —
+   four call sites, all inside `agent.js`.** Not a single chokepoint,
+   but confined to one (very large, >28k line) file, which makes an
+   in-extension gate more tractable than feared for Options A/B.
 
 ## Next step (not taken)
 Do not implement until question 1 is answered. If Option C is

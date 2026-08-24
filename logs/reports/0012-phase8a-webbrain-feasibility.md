@@ -105,3 +105,32 @@ but cannot prevent a user from routing around it, which is weaker than
 an in-extension gate and must not be oversold in a demo. No decision was
 made unilaterally, no ADR was written, and no code was imported or
 implemented, per instruction.
+
+## Addendum (same session): local clone completed, three open questions closed
+
+The blob-filtered clone that had stalled finished after the initial
+write-up was committed (`351018a`), yielding a real working tree at the
+same pinned SHA. Because my own Option C recommendation rested on an
+unverified assumption, I used the clone to close it rather than leave
+the recommendation resting on a guess:
+
+- **Q5 answered**: `chat()`/`chatStream()` has four call sites, all in
+  `agent.js`. Not a single chokepoint, but one file — more tractable
+  for Options A/B than feared.
+- **Q4 answered, and it is load-bearing for the recommendation**:
+  `openai.js` does forward `image_url` blocks to custom endpoints, but
+  `agent.js:18609` strips all images when `provider.supportsVision` is
+  false, and that flag is resolved for custom endpoints by model-name
+  regex sniffing. **Ozer's proxy must advertise a vision-matching model
+  identity or screenshots never reach it** — Tier 3 would silently have
+  nothing to redact while text tiers kept working. This does not change
+  the Option C recommendation, but it is a concrete implementation
+  precondition that would have caused a confusing silent failure if
+  found late.
+- The "clone could not be completed" method limitation is superseded
+  for these three items; earlier findings were not re-derived, as they
+  were already read from real file bytes at the same commit.
+
+Still unverified: Q3 (independent invocability of the WebGPU vision
+model), Firefox source-level parity, `manager.js`. No decision made, no
+code imported, no implementation performed.

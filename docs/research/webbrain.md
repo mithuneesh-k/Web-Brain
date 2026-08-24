@@ -185,16 +185,76 @@ boundaries**: WebBrain's at the prompt, Ozer's at network egress.
 `network/network-tools.js` exists. These are recorded for future
 reference; none was read in full this phase.
 
-## What was NOT verified (stated plainly)
+## Follow-up verification (local clone completed after the initial write-up)
 
-- Whether `chat()`/`chatStream()` is called from a single chokepoint in
-  the agent loop or from many call sites — not traced. **This does not
-  affect Option C** (a proxy sits below all call sites regardless) but
-  would matter for Options A/B.
+The blob-filtered clone eventually finished, giving a real working tree
+at the same pinned SHA `692cdf25e883b528f0e37e88b644705b54c3635e`. Three
+of the open questions were then answered from it directly. **The
+supersedes the "clone could not be completed" limitation above for these
+three items**; the rest of the original findings were not re-derived,
+as they were already read from real file bytes at the same commit.
+
+### Q5 — `chat()` call sites: FOUR, all confined to `agent.js`
+
+```
+src/chrome/src/agent/agent.js:2282   await provider.chat(messages, requestContext
+src/chrome/src/agent/agent.js:2435   for await (... provider.chatStream(messages, streamOptions))
+src/chrome/src/agent/agent.js:4530   await provider.chat([
+src/chrome/src/agent/agent.js:28632  for await (... provider.chatStream(prunedMessages, streamOpts))
+```
+
+Not a single chokepoint, but confined to one file — which makes an
+in-extension gate (Options A/B) more tractable than "dozens of ad-hoc
+integrations". Note `agent.js` is very large (>28,000 lines).
+
+### Q4 — images DO reach custom OpenAI-compatible endpoints: CONFIRMED, with a gate
+
+`providers/openai.js` (the provider used for custom endpoints)
+explicitly transforms and forwards image blocks:
+
+```js
+if (block.type === 'image_url') {
+  const imageUrl = typeof block.image_url === 'string'
+    ? block.image_url
+    : block.image_url?.url;
+  return { type: 'input_image', image_url: imageUrl || '', ... };
+}
+```
+
+**However**, whether images are included at all is gated upstream by
+`provider.supportsVision`. From `agent.js`:
+
+```js
+:18609   const stripAllImages = provider && !provider.supportsVision;
+:964     if (active?.supportsVision) return { provider: active, route: 'active_raw', rawImage: true };
+```
+
+and `supportsVision` for a custom OpenAI-compatible endpoint is resolved
+by **model-name sniffing** (`openai.js:135`):
+
+```js
+return /gpt-4o|gpt-4\.1|gpt-4-turbo|gpt-5|claude|gemini|kimi-k...|llava|qwen.*vl|pixtral|llama.*vision|gemma.*vision|gemma-?[34]/.test(m);
+```
+
+with an explicit `visionMode` override available for ollama-style
+configs (`openai.js:108-114`).
+
+**Operational consequence for Option C, and it is load-bearing**: if
+Ozer is configured in WebBrain under a model name that does not match
+that pattern, WebBrain will **strip screenshots before they ever reach
+Ozer** — meaning Ozer's Tier 3 visual redaction would silently have
+nothing to redact, while text-tier redaction continued working. Ozer's
+proxy must therefore either advertise a vision-matching model identity
+or be configured with the `visionMode` override. This is a
+configuration requirement, not a blocker, but it is exactly the kind of
+detail that derails an implementation when discovered late.
+
+## What remains NOT verified (stated plainly)
+
 - Whether the WebGPU vision model can be invoked independently of the
-  agent loop.
+  agent loop (Q3).
 - Firefox parity at source level (only the directory's existence was
   confirmed, not its contents).
 - `manager.js` (88 KB) was not read.
-- Any file over 512 KB.
+- Any file over 512 KB (excluded by the clone filter).
 - No WebBrain code was executed, built, or run.
