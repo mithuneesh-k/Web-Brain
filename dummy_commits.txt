@@ -7,3 +7,4 @@ Commit 5: perf(edge): reduce latency in frame processing pipeline #6437
 Commit 6: perf(redaction): optimize DOM traversal during masking pass #7595
 Commit 7: test(privacy): verify complete removal of targeted PII #2889
 Commit 8: perf(redaction): optimize DOM traversal during masking pass #5466
+Commit 9: feat(privacy): add regex-based PII masking to text streams #8769
