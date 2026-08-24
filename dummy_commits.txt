@@ -72,3 +72,4 @@ Commit 70: chore(arch): refactor component communication interfaces #7724
 Commit 71: feat(redaction): implement dynamic visual blurring for image regions #4511
 Commit 72: test(vision): benchmark new segmentation architecture #5154
 Commit 73: feat(redaction): implement dynamic visual blurring for image regions #4760
+Commit 74: fix(privacy): prevent leak of credentials in crash reports #6113
