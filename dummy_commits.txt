@@ -89,3 +89,4 @@ Commit 87: fix(extension): ensure reliable message passing across contexts #5729
 Commit 88: fix(prompt): mitigate hallucination in structured JSON parsing #1547
 Commit 89: chore(edge): update tensorrt execution provider #4421
 Commit 90: fix(edge): resolve OOM errors on low-memory devices #2706
+Commit 91: feat(execution): implement robust retry mechanism for stale elements #6387
