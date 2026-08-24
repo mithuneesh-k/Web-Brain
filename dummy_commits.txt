@@ -115,3 +115,4 @@ Commit 113: perf(client): lazy load heavy UI components #1173
 Commit 114: feat(browser): add support for handling complex popups #9114
 Commit 115: refactor(arch): isolate dependency injection container #9639
 Commit 116: fix(execution): prevent memory leak during long sessions #5253
+Commit 117: perf(edge): reduce latency in frame processing pipeline #2718
