@@ -50,3 +50,4 @@ Commit 48: refactor(vision): modularize frame extraction logic #3941
 Commit 49: test(vision): benchmark new segmentation architecture #7721
 Commit 50: docs(eval): update system latency and throughput benchmarks #4072
 Commit 51: feat(orchestration): implement fallback mechanism for API timeouts #5489
+Commit 52: refactor(prompt): modularize prompt templates by task type #3894
