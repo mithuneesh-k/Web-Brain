@@ -36,3 +36,4 @@ Commit 34: fix(privacy): prevent leak of credentials in crash reports #5791
 Commit 35: perf(client): lazy load heavy UI components #8333
 Commit 36: perf(browser): optimize page load waiting logic #6229
 Commit 37: refactor(arch): isolate dependency injection container #7861
+Commit 38: fix(vision): correct aspect ratio distortion during downscaling #5175
