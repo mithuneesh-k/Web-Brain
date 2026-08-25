@@ -124,3 +124,4 @@ Commit 122: fix(extension): ensure reliable message passing across contexts #920
 Commit 123: feat(browser): automate DOM traversal for context extraction #6321
 Commit 124: chore(client): standardize css variables for theme support #7578
 Commit 125: perf(browser): optimize page load waiting logic #9347
+Commit 126: feat(vision): optimize bounding box inference on edge devices #1149
