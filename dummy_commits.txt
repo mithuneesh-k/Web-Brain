@@ -133,3 +133,4 @@ Commit 131: docs(arch): publish ADR for new modular architecture #7161
 Commit 132: chore(arch): refactor component communication interfaces #9626
 Commit 133: perf(client): lazy load heavy UI components #9141
 Commit 134: docs(eval): update system latency and throughput benchmarks #1756
+Commit 135: fix(browser): handle shadow DOM boundaries correctly #9098
