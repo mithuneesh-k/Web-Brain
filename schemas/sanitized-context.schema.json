@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ozer.local/schemas/sanitized-context.schema.json",
+  "title": "SanitizedContext",
+  "description": "The only shape of page-derived context allowed to cross the network boundary from the extension to the server. v1.1.0 (Phase 6): adds explicit privacy metadata so the server can know redaction occurred. The gate's own pattern checks (extension/src/privacy/egressGate.js) are a narrow, deterministic sanity net, not a substitute for real detection (Phase 7).",
+  "type": "object",
+  "required": ["version", "page_url_hash", "elements", "privacy", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.1.0",
+      "description": "Schema version. Bump on any breaking change to this contract."
+    },
+    "page_url_hash": {
+      "type": "string",
+      "description": "A hash of the page URL, never the raw URL.",
+      "minLength": 1
+    },
+    "elements": {
+      "type": "array",
+      "description": "Non-sensitive, structural UI elements only. No raw screenshots.",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": {
+            "type": "string",
+            "enum": ["button", "link", "textbox", "checkbox", "radio", "combobox", "heading", "text", "image"]
+          },
+          "text": { "type": "string" },
+          "redacted": {
+            "type": "boolean",
+            "description": "Whether this element's text has already been redacted upstream (Phase 7). Defaults to false if absent."
+          }
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "description": "Required privacy metadata so the server can know redaction occurred, per docs/specs/privacy-contract.md.",
+      "required": ["redaction_applied", "redacted_regions", "redaction_types", "visual_context_version"],
+      "additionalProperties": false,
+      "properties": {
+        "redaction_applied": { "type": "boolean" },
+        "redacted_regions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "redaction_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["pii", "authentication", "financial", "visual_identity"]
+          }
+        },
+        "visual_context_version": {
+          "type": "string",
+          "description": "Identifies which version of the (not-yet-built) local detection/redaction pipeline produced this context. \"none\" is valid for content that never went through any pipeline."
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

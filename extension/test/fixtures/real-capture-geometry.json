@@ -1,0 +1,250 @@
+{
+ "dpr": 1.25,
+ "scrollX": 0,
+ "scrollY": 0,
+ "vw": 800,
+ "vh": 600,
+ "elements": [
+  {
+   "id": "hdr",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Account settings",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "width": 800,
+    "height": 51.796875
+   }
+  },
+  {
+   "id": "note",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Review your details below and choose Save changes when you are done.",
+   "rect": {
+    "x": 20,
+    "y": 85.796875,
+    "width": 760,
+    "height": 19.59375
+   }
+  },
+  {
+   "id": "label-2",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Email address",
+   "rect": {
+    "x": 20,
+    "y": 123.390625,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "email",
+   "role": "textbox",
+   "type": "email",
+   "name": "email",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "test.user@example-fake.test",
+   "rect": {
+    "x": 20,
+    "y": 142.78125,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "label-4",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Phone number",
+   "rect": {
+    "x": 20,
+    "y": 188.78125,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "phone",
+   "role": "textbox",
+   "type": "tel",
+   "name": "phone",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "+1 (555) 010-0100",
+   "rect": {
+    "x": 20,
+    "y": 208.171875,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "label-6",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Password",
+   "rect": {
+    "x": 20,
+    "y": 254.171875,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "password",
+   "role": "textbox",
+   "type": "password",
+   "name": "password",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "fakePassw0rd!",
+   "rect": {
+    "x": 20,
+    "y": 273.5625,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "label-8",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "API token",
+   "rect": {
+    "x": 20,
+    "y": 319.5625,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "api_token",
+   "role": "textbox",
+   "type": "text",
+   "name": "api_token",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "sk-fakeFAKEfakeFAKEfakeFAKE",
+   "rect": {
+    "x": 20,
+    "y": 338.953125,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "label-10",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "One-time code",
+   "rect": {
+    "x": 20,
+    "y": 384.953125,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "otp",
+   "role": "textbox",
+   "type": "text",
+   "name": "otp",
+   "autocomplete": "one-time-code",
+   "ariaLabel": "",
+   "text": "482913",
+   "rect": {
+    "x": 20,
+    "y": 404.34375,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "label-12",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Display name",
+   "rect": {
+    "x": 20,
+    "y": 450.34375,
+    "width": 760,
+    "height": 15.390625
+   }
+  },
+  {
+   "id": "nickname",
+   "role": "textbox",
+   "type": "text",
+   "name": "nickname",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Sunflower",
+   "rect": {
+    "x": 20,
+    "y": 469.734375,
+    "width": 320,
+    "height": 32
+   }
+  },
+  {
+   "id": "save",
+   "role": "button",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Save changes",
+   "rect": {
+    "x": 20,
+    "y": 515.734375,
+    "width": 124.734375,
+    "height": 34
+   }
+  },
+  {
+   "id": "ftr",
+   "role": "text",
+   "type": "",
+   "name": "",
+   "autocomplete": "",
+   "ariaLabel": "",
+   "text": "Synthetic fixture for Ozer privacy testing. No real data.",
+   "rect": {
+    "x": 0,
+    "y": 577.734375,
+    "width": 800,
+    "height": 45.796875
+   }
+  }
+ ],
+ "_note": "REAL getBoundingClientRect() values captured in the SAME playwright session that produced real-capture.png, so geometry and pixels are guaranteed consistent. Fixture page content is synthetic. Regenerate: node extension/tools/capture-fixture.js"
+}

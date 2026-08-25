@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ozer.local/schemas/typed-action.schema.json",
+  "title": "TypedAction",
+  "description": "The only shape of instruction the server may return, and the only shape of instruction the companion may execute. Phase 5: action enum limited to click/noop as a contract-shape proof — the full action set (scroll, navigate, input, etc.) arrives alongside real reasoning in Phase 8.",
+  "type": "object",
+  "required": ["version", "action", "target_id", "value"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["click", "noop"]
+    },
+    "target_id": {
+      "type": ["string", "null"],
+      "description": "References an element id from the SanitizedContext this action was decided from. Null for noop."
+    },
+    "value": {
+      "type": ["string", "null"],
+      "description": "Reserved for future action types (e.g. input text). Unused by click/noop."
+    }
+  }
+}

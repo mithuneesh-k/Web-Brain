@@ -1,0 +1,22 @@
+{
+  "_note": "Synthetic, clearly fake fixture data for Phase 7 Tier 1 detector benchmarking. No real credentials, no real PII. Reviewed before commit per docs/specs/phase7-local-detection.md.",
+  "cases": [
+    { "id": "c1", "element": { "id": "c1", "role": "textbox", "type": "password", "text": "fakePassw0rd!" }, "expected_sensitive": true, "expected_type": "authentication" },
+    { "id": "c2", "element": { "id": "c2", "role": "textbox", "name": "otp_code", "autocomplete": "one-time-code", "text": "482913" }, "expected_sensitive": true, "expected_type": "authentication" },
+    { "id": "c3", "element": { "id": "c3", "role": "textbox", "name": "api_token", "text": "placeholder-value" }, "expected_sensitive": true, "expected_type": "authentication" },
+    { "id": "c4", "element": { "id": "c4", "role": "textbox", "type": "text", "text": "sk-fakeFAKEfakeFAKEfakeFAKE" }, "expected_sensitive": true, "expected_type": "authentication" },
+    { "id": "c5", "element": { "id": "c5", "role": "textbox", "type": "email", "text": "" }, "expected_sensitive": true, "expected_type": "pii" },
+    { "id": "c6", "element": { "id": "c6", "role": "textbox", "type": "text", "text": "test.user@example-fake.test" }, "expected_sensitive": true, "expected_type": "pii" },
+    { "id": "c7", "element": { "id": "c7", "role": "textbox", "type": "tel", "text": "" }, "expected_sensitive": true, "expected_type": "pii" },
+    { "id": "c8", "element": { "id": "c8", "role": "textbox", "type": "text", "text": "+1 (555) 010-0100" }, "expected_sensitive": true, "expected_type": "pii" },
+    { "id": "c9", "element": { "id": "c9", "role": "textbox", "type": "text", "text": "4111 1111 1111 1111" }, "expected_sensitive": true, "expected_type": "financial" },
+    { "id": "c10", "element": { "id": "c10", "role": "textbox", "type": "text", "text": "5500 0000 0000 0004" }, "expected_sensitive": true, "expected_type": "financial" },
+    { "id": "n1", "element": { "id": "n1", "role": "button", "text": "Submit form" }, "expected_sensitive": false },
+    { "id": "n2", "element": { "id": "n2", "role": "link", "text": "Learn more" }, "expected_sensitive": false },
+    { "id": "n3", "element": { "id": "n3", "role": "heading", "text": "Welcome to the demo page" }, "expected_sensitive": false },
+    { "id": "n4", "element": { "id": "n4", "role": "textbox", "type": "text", "name": "comment", "text": "This is just a regular comment." }, "expected_sensitive": false },
+    { "id": "n5", "element": { "id": "n5", "role": "textbox", "type": "text", "text": "1234 5678 9012 3456" }, "expected_sensitive": false, "_note": "Luhn-invalid, must not be flagged as a card number" },
+    { "id": "n6", "element": { "id": "n6", "role": "checkbox", "text": "Remember me" }, "expected_sensitive": false },
+    { "id": "n7", "element": { "id": "n7", "role": "textbox", "type": "text", "text": "42" }, "expected_sensitive": false }
+  ]
+}

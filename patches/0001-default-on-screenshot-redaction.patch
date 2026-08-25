@@ -1,0 +1,62 @@
+--- a/src/chrome/src/agent/agent.js
++++ b/src/chrome/src/agent/agent.js
+@@ -601,9 +601,13 @@
+     this.useSiteAdapters = true;
+     // Local screenshot redaction (issue #312). When true, screenshots sent
+     // to a Vision endpoint are pixelated over DOM-detected PII regions
+-    // (form fields + email/phone text) BEFORE leaving the extension. Off by
+-    // default — loaded from chrome.storage.local in background.js.
+-    this.screenshotRedaction = false;
++    // (form fields + email/phone text) BEFORE leaving the extension.
++    // OZER PATCH 0001: ON by default. Privacy is not a feature the user
++    // must remember to enable; it is the default policy governing what
++    // page-derived data may leave the device. An explicit stored value
++    // still wins (chrome.storage.local in background.js), so a user who
++    // deliberately turned it off keeps it off.
++    this.screenshotRedaction = true;
+     // Image budget (issue #311): screenshot quality + capture limits. All
+     // loaded from chrome.storage.local in background.js. Defaults preserve the
+     // previous behavior: no explicit `detail` was ever sent (so the provider
+--- a/src/firefox/src/agent/agent.js
++++ b/src/firefox/src/agent/agent.js
+@@ -562,9 +562,13 @@
+     this.deliveryObservationStreaks = new Map();
+     // Local screenshot redaction (issue #312). When true, screenshots sent
+     // to a Vision endpoint are pixelated over DOM-detected PII regions
+-    // (form fields + email/phone text) BEFORE leaving the extension. Off by
+-    // default — loaded from browser.storage.local in background.js.
+-    this.screenshotRedaction = false;
++    // (form fields + email/phone text) BEFORE leaving the extension.
++    // OZER PATCH 0001: ON by default. Privacy is not a feature the user
++    // must remember to enable; it is the default policy governing what
++    // page-derived data may leave the device. An explicit stored value
++    // still wins (browser.storage.local in background.js), so a user who
++    // deliberately turned it off keeps it off.
++    this.screenshotRedaction = true;
+     this.lastAutoScreenshotTs = new Map();
+     this.lastSeenAdapter = new Map();
+     this.apiAllowedTabs = new Set();
+--- a/src/chrome/src/background.js
++++ b/src/chrome/src/background.js
+@@ -421,7 +421,8 @@
+ 
+ // Local screenshot redaction (issue #312): when on, screenshots are pixelated
+ // over DOM-detected PII (form fields + email/phone text) BEFORE leaving the
+-// extension for a Vision endpoint. OFF by default.
++// extension for a Vision endpoint. ON by default (OZER PATCH 0001); an
++// explicit stored value still wins, so a user who turned it off keeps it off.
+ async function loadScreenshotRedaction() {
+   const stored = await chrome.storage.local.get('screenshotRedaction');
+   if (stored.screenshotRedaction != null) agent.screenshotRedaction = !!stored.screenshotRedaction;
+--- a/src/firefox/src/background.js
++++ b/src/firefox/src/background.js
+@@ -346,7 +346,8 @@
+ 
+ // Local screenshot redaction (issue #312): when on, screenshots are pixelated
+ // over DOM-detected PII (form fields + email/phone text) BEFORE leaving the
+-// extension for a Vision endpoint. OFF by default.
++// extension for a Vision endpoint. ON by default (OZER PATCH 0001); an
++// explicit stored value still wins, so a user who turned it off keeps it off.
+ async function loadScreenshotRedaction() {
+   const stored = await browser.storage.local.get('screenshotRedaction');
+   if (stored.screenshotRedaction != null) agent.screenshotRedaction = !!stored.screenshotRedaction;

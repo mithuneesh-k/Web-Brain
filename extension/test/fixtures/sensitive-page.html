@@ -1,0 +1,64 @@
+<meta charset="utf-8">
+<title>Ozer test fixture — synthetic account page</title>
+<!--
+  Ozer end-to-end test fixture. ALL VALUES ARE SYNTHETIC AND FAKE.
+  No real credentials, no real personal data. Used to prove the
+  detect -> getBoundingClientRect -> pixel box -> redact pipeline on a
+  real DOM rather than on stubbed rectangles.
+-->
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #f7f8fa; width: 800px;
+    font: 14px/1.4 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #373c46;
+  }
+  header { background: #264a8c; color: #fff; padding: 14px 20px; font-size: 17px; font-weight: 600; }
+  main { padding: 20px; }
+  .row { margin-bottom: 14px; }
+  label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #8c94a0; margin-bottom: 4px; }
+  input { width: 320px; padding: 7px 9px; border: 1px solid #cdd2dc; border-radius: 4px; font-size: 14px; background: #fff; }
+  .note { color: #5a6070; margin-bottom: 18px; }
+  button { background: #268c56; color: #fff; border: 0; border-radius: 4px; padding: 9px 18px; font-size: 14px; cursor: pointer; }
+  footer { padding: 14px 20px; color: #969eaa; font-size: 12px; border-top: 1px solid #e1e4ea; margin-top: 8px; }
+</style>
+
+<header id="hdr">Account settings</header>
+<main>
+  <p class="note" id="note">
+    Review your details below and choose <strong>Save changes</strong> when you are done.
+  </p>
+
+  <div class="row">
+    <label for="email">Email address</label>
+    <input id="email" name="email" type="email" value="test.user@example-fake.test">
+  </div>
+
+  <div class="row">
+    <label for="phone">Phone number</label>
+    <input id="phone" name="phone" type="tel" value="+1 (555) 010-0100">
+  </div>
+
+  <div class="row">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" value="fakePassw0rd!">
+  </div>
+
+  <div class="row">
+    <label for="api_token">API token</label>
+    <input id="api_token" name="api_token" type="text" value="sk-fakeFAKEfakeFAKEfakeFAKE">
+  </div>
+
+  <div class="row">
+    <label for="otp">One-time code</label>
+    <input id="otp" name="otp" autocomplete="one-time-code" type="text" value="482913">
+  </div>
+
+  <div class="row">
+    <label for="nickname">Display name</label>
+    <input id="nickname" name="nickname" type="text" value="Sunflower">
+  </div>
+
+  <button id="save">Save changes</button>
+</main>
+<footer id="ftr">Synthetic fixture for Ozer privacy testing. No real data.</footer>
