@@ -131,3 +131,4 @@ Commit 129: refactor(execution): streamline action queuing system #5362
 Commit 130: docs(eval): update system latency and throughput benchmarks #9661
 Commit 131: test(privacy): verify complete removal of targeted PII #5714
 Commit 132: test(privacy): verify complete removal of targeted PII #1405
+Commit 133: chore(extension): update manifest v3 permissions #8729
