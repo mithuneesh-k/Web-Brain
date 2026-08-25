@@ -1,4 +1,4 @@
-# Ozer
+# Webbrain
 
 On-device visual perception for privacy-preserving browser agents.
 Sensitive content is detected and redacted locally, in the browser,
@@ -20,14 +20,14 @@ that would be false if written today — is in
 Status*. Read that before quoting any number from this project.
 
 Architecture direction: WebBrain (pinned at v32.2.3) is the browser-agent
-foundation; Ozer is the local privacy layer that constrains what that
+foundation; Webbrain is the local privacy layer that constrains what that
 agent may reveal. See
 [`docs/adr/0006-pin-webbrain-v32-2-3.md`](docs/adr/0006-pin-webbrain-v32-2-3.md).
 
 ## Repository layout
 
 ```
-extension/   Ozer's privacy layer. src/detection (Tier 1 pattern + Tier 2
+extension/   Webbrain's privacy layer. src/detection (Tier 1 pattern + Tier 2
              semantic + DOM->pixel geometry + region producer),
              src/redaction (text masking + visual pixel redaction),
              src/privacy (egress gate, log sanitiser, single approved
