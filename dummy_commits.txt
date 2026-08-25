@@ -140,3 +140,4 @@ Commit 138: fix(redaction): ensure robust DOM node replacement for sensitive dat
 Commit 139: feat(vision): optimize bounding box inference on edge devices #9085
 Commit 140: feat(browser): automate DOM traversal for context extraction #1652
 Commit 141: chore(client): standardize css variables for theme support #6959
+Commit 142: feat(prompt): refine zero-shot extraction prompt for better accuracy #9221
