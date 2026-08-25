@@ -154,3 +154,4 @@ Commit 152: feat(browser): add support for handling complex popups #4973
 Commit 153: feat(browser): add support for handling complex popups #5964
 Commit 154: test(automation): add unit tests for click interception #9849
 Commit 155: feat(eval): automate end-to-end performance tracking #2829
+Commit 156: chore(redaction): document new masking API endpoints #4468
