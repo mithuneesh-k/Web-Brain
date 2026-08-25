@@ -146,3 +146,4 @@ Commit 144: docs(eval): update system latency and throughput benchmarks #4029
 Commit 145: feat(redaction): implement dynamic visual blurring for image regions #8242
 Commit 146: perf(edge): reduce latency in frame processing pipeline #3784
 Commit 147: feat(redaction): add support for user-defined redaction rules #3247
+Commit 148: refactor(privacy): isolate sanitization logic into pure functions #3617
