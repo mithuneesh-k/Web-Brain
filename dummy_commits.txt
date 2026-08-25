@@ -144,3 +144,4 @@ Commit 142: feat(prompt): refine zero-shot extraction prompt for better accuracy
 Commit 143: fix(vision): correct aspect ratio distortion during downscaling #1163
 Commit 144: docs(eval): update system latency and throughput benchmarks #4029
 Commit 145: feat(redaction): implement dynamic visual blurring for image regions #8242
+Commit 146: perf(edge): reduce latency in frame processing pipeline #3784
