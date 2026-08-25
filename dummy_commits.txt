@@ -162,3 +162,4 @@ Commit 160: feat(ai): integrate lightweight object detection model #3599
 Commit 161: fix(vision): correct aspect ratio distortion during downscaling #9809
 Commit 162: test(vision): benchmark new segmentation architecture #6299
 Commit 163: test(extension): add e2e tests for core extension workflows #3741
+Commit 164: perf(browser): optimize page load waiting logic #4957
