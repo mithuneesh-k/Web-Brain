@@ -62,9 +62,40 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+import httpx
+import json
+
 @app.post("/reason", response_model=TypedAction)
-def reason(context: SanitizedContext) -> TypedAction:
+async def reason(context: SanitizedContext) -> TypedAction:
     if not context.elements:
         return TypedAction(action="noop", target_id=None, value=None)
+    
+    # We construct a prompt for the local model (OpenAI compatible endpoint)
+    # The extension will send the user's prompt as the first element's text as a hack, or we can just make it generic.
+    elements_text = json.dumps([el.model_dump() for el in context.elements])
+    prompt = f"You are a browser automation agent. Given these elements:\n{elements_text}\nPick the ID of the most likely element the user wants to click, or type into. Output a JSON object with 'action' ('click', 'type', or 'noop'), 'target_id' (the element id), and 'value' (if typing)."
+    
+    try:
+        # Assuming local model like Ollama on port 11434
+        async with httpx.AsyncClient() as client:
+            resp = await client.post("http://localhost:11434/v1/chat/completions", json={
+                "model": "llama3.1", # Or whichever lightweight model is available
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"}
+            }, timeout=30.0)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+                result = json.loads(content)
+                return TypedAction(
+                    action=result.get("action", "noop"),
+                    target_id=result.get("target_id"),
+                    value=result.get("value")
+                )
+    except Exception as e:
+        print("Error calling local model:", e)
+        
+    # Fallback to stub behavior if model fails
     first = context.elements[0]
     return TypedAction(action="click", target_id=first.id, value=None)

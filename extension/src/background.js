@@ -20,6 +20,7 @@ importScripts(
 const SERVER_URL = "http://localhost:8001";
 const COMPANION_URL = "http://localhost:8002";
 
+// Keep helloWorld for legacy compatibility
 async function helloWorld() {
   const result = await runRoundTrip({
     fetch,
@@ -30,9 +31,46 @@ async function helloWorld() {
   return result;
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("Ozer extension installed (Phase 5 baseline)");
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "run_agent") {
+    (async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) throw new Error("No active tab.");
+
+        // 1. Extract DOM via content script
+        const domResult = await chrome.tabs.sendMessage(tab.id, { type: "EXTRACT_DOM" });
+        if (!domResult || !domResult.elements) throw new Error("Could not extract DOM from page.");
+
+        // We can pass the user prompt by appending a dummy element (hack for prototype)
+        const elements = domResult.elements;
+        elements.unshift({ id: "prompt", role: "text", text: `USER GOAL: ${message.prompt}` });
+
+        // 2. Call Ozer's privacy pipeline (this does detection, redaction, and sends to local model)
+        const typedAction = await OzerPrivacyClient.postSanitizedContext(elements, {
+          fetch,
+          serverUrl: SERVER_URL,
+          pageUrlHash: "dummy-hash" // Or generate a real hash
+        });
+
+        // 3. Send action back to content script for execution
+        const execResult = await chrome.tabs.sendMessage(tab.id, {
+          type: "EXECUTE_ACTION",
+          actionPayload: typedAction
+        });
+
+        sendResponse({ result: execResult.result });
+      } catch (err) {
+        console.error("Agent error:", err);
+        sendResponse({ error: err.message });
+      }
+    })();
+    return true; // Keep message channel open for async response
+  }
 });
 
-// Exposed for manual testing from the extension's service worker console.
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("Ozer extension installed (Local Agent Mode)");
+});
+
 self.ozerHelloWorld = helloWorld;
