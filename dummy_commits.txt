@@ -156,3 +156,4 @@ Commit 154: feat(browser): add support for handling complex popups #5243
 Commit 155: chore(client): standardize css variables for theme support #7172
 Commit 156: feat(eval): automate end-to-end performance tracking #4620
 Commit 157: feat(execution): implement robust retry mechanism for stale elements #2296
+Commit 158: fix(prompt): mitigate hallucination in structured JSON parsing #9264
