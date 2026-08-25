@@ -163,3 +163,4 @@ Commit 161: feat(vision): add temporal smoothing for tracking consistency #3040
 Commit 162: fix(edge): resolve OOM errors on low-memory devices #6830
 Commit 163: fix(vision): correct aspect ratio distortion during downscaling #2023
 Commit 164: feat(execution): implement robust retry mechanism for stale elements #7620
+Commit 165: fix(browser): handle shadow DOM boundaries correctly #9386
