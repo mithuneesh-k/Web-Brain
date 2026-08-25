@@ -134,3 +134,4 @@ Commit 132: test(privacy): verify complete removal of targeted PII #1405
 Commit 133: chore(extension): update manifest v3 permissions #8729
 Commit 134: test(privacy): verify complete removal of targeted PII #5835
 Commit 135: chore(edge): update tensorrt execution provider #9661
+Commit 136: perf(redaction): optimize DOM traversal during masking pass #6445
