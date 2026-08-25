@@ -130,3 +130,4 @@ Commit 128: fix(extension): ensure reliable message passing across contexts #198
 Commit 129: test(automation): add unit tests for click interception #1554
 Commit 130: feat(client): add settings panel for user preferences #9803
 Commit 131: docs(arch): publish ADR for new modular architecture #7161
+Commit 132: chore(arch): refactor component communication interfaces #9626
