@@ -122,3 +122,4 @@ Commit 120: chore(extension): update manifest v3 permissions #3139
 Commit 121: feat(vision): optimize bounding box inference on edge devices #3289
 Commit 122: feat(eval): automate end-to-end performance tracking #9075
 Commit 123: fix(browser): handle shadow DOM boundaries correctly #1580
+Commit 124: feat(arch): introduce unified event bus for modularity #4566
