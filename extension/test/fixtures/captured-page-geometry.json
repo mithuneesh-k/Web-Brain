@@ -1,0 +1,26 @@
+{
+  "_note": "REAL getBoundingClientRect() values captured from extension/test/fixtures/sensitive-page.html in a live browser at 800x600, devicePixelRatio 1.25. All page values are synthetic. Regenerate: load the fixture, run the extraction snippet in docs/specs/phase10-region-production.md.",
+  "dpr": 1.25,
+  "scrollX": 0,
+  "scrollY": 0,
+  "vw": 800,
+  "vh": 600,
+  "elements": [
+    {"id":"hdr","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Account settings","rect":{"x":0,"y":0,"width":800,"height":51.79999923706055}},
+    {"id":"note","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Review your details below and choose Save changes when you are done.","rect":{"x":20,"y":85.80000305175781,"width":760,"height":19.600000381469727}},
+    {"id":"label-2","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Email address","rect":{"x":20,"y":123.4000015258789,"width":760,"height":15.40000057220459}},
+    {"id":"email","role":"textbox","type":"email","name":"email","autocomplete":"","ariaLabel":"","text":"test.user@example-fake.test","rect":{"x":20,"y":142.8000030517578,"width":320,"height":32.400001525878906}},
+    {"id":"label-4","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Phone number","rect":{"x":20,"y":189.1999969482422,"width":760,"height":15.40000057220459}},
+    {"id":"phone","role":"textbox","type":"tel","name":"phone","autocomplete":"","ariaLabel":"","text":"+1 (555) 010-0100","rect":{"x":20,"y":208.60000610351562,"width":320,"height":32.400001525878906}},
+    {"id":"label-6","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Password","rect":{"x":20,"y":255,"width":760,"height":15.40000057220459}},
+    {"id":"password","role":"textbox","type":"password","name":"password","autocomplete":"","ariaLabel":"","text":"fakePassw0rd!","rect":{"x":20,"y":274.3999938964844,"width":320,"height":32.400001525878906}},
+    {"id":"label-8","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"API token","rect":{"x":20,"y":320.8000183105469,"width":760,"height":15.40000057220459}},
+    {"id":"api_token","role":"textbox","type":"text","name":"api_token","autocomplete":"","ariaLabel":"","text":"sk-fakeFAKEfakeFAKEfakeFAKE","rect":{"x":20,"y":340.20001220703125,"width":320,"height":32.400001525878906}},
+    {"id":"label-10","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"One-time code","rect":{"x":20,"y":386.6000061035156,"width":760,"height":15.40000057220459}},
+    {"id":"otp","role":"textbox","type":"text","name":"otp","autocomplete":"one-time-code","ariaLabel":"","text":"482913","rect":{"x":20,"y":406,"width":320,"height":32.400001525878906}},
+    {"id":"label-12","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Display name","rect":{"x":20,"y":452.3999938964844,"width":760,"height":15.40000057220459}},
+    {"id":"nickname","role":"textbox","type":"text","name":"nickname","autocomplete":"","ariaLabel":"","text":"Sunflower","rect":{"x":20,"y":471.8000183105469,"width":320,"height":32.400001525878906}},
+    {"id":"save","role":"button","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Save changes","rect":{"x":20,"y":518.2000122070312,"width":124.73750305175781,"height":34.79999923706055}},
+    {"id":"ftr","role":"text","type":"","name":"","autocomplete":"","ariaLabel":"","text":"Synthetic fixture for Ozer privacy testing. No real data.","rect":{"x":0,"y":581,"width":800,"height":45.60000228881836}}
+  ]
+}

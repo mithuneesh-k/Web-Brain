@@ -51,21 +51,174 @@ Every subsystem should state which metric it serves and how it's measured.
   implementation — treat as a bootstrap target, not a working codebase.
 - Engineering operating system (this file, `AGENTS.md`, `CLAUDE.md`, `docs/`,
   `logs/`) is being established in this session, per `OZER-FOUNDATION-001`.
-- No browser-use import has happened yet. No privacy architecture has been
-  implemented yet. No local model has been selected.
-- GitHub remote push access: UNVERIFIED as of this session — see baseline report.
+- Matt Pocock skill package installed (`mattpocock/skills`, 36 skills) —
+  see `docs/research/matt-pocock-skills.md`, `docs/adr/0001-*.md`.
+- Graphify (Graphify Labs, PyPI `graphifyy`) installed at version
+  `0.9.48`, scoped to **code-graph indexing only** — Markdown/spec/ADR
+  retrieval remains direct reading. See `docs/research/graphify.md`,
+  `docs/architecture/graphify-integration.md`, `docs/adr/0002-*.md`.
+- **ARCHITECTURE PIVOT (current direction, ADR 0005)**: WebBrain
+  (`webbrain-one/webbrain`, v33.2.1, **GPL-3.0-or-later**, inspected at
+  pinned commit `692cdf25e883b528f0e37e88b644705b54c3635e`) becomes the
+  browser-agent foundation. **Ozer becomes the local privacy layer**,
+  not a competing browser agent. Protection is layered: the local
+  privacy gate is PRIMARY, an OpenAI-compatible local proxy is defense
+  in depth. Decisive finding: WebBrain's credential protection is
+  prompt-level, not egress-level — it tells the model not to quote a
+  credential, but the credential still reaches the provider
+  (`agent/credential-fields.js`: "The value is in the conversation
+  history above if you need to reference it"). That gap is Ozer's
+  contribution. See `docs/research/webbrain.md`,
+  `docs/specs/phase8a-webbrain-feasibility.md`,
+  `docs/adr/0005-webbrain-as-agent-ozer-as-privacy-layer.md`.
+  **No WebBrain code has been imported, forked, or modified.**
+- browser-use (`browser-use/browser-use`, MIT, commit
+  `85ddbfedf609166b2d2c76c3d80506649fee82a9`) was inspected at source
+  level in Phase 4 and selected as the execution engine — **now
+  superseded in part by ADR 0005** (WebBrain fills that role instead).
+  It was never installed or imported, so nothing needs unwinding. Its
+  privacy-bypass analysis remains valid and carries over. See
+  `docs/research/browser-use.md`,
+  `docs/adr/0003-browser-use-integration-strategy.md`.
+- **Phase 5 (reproducible baseline) complete**: `extension/` (Manifest
+  V3 stub), `server/` (FastAPI reasoning stub), `companion/` (FastAPI
+  execution stub), `schemas/` (shared JSON Schema contracts:
+  `SanitizedContext`, `TypedAction`, `ExecutionResult`). A real,
+  live end-to-end round trip was proven (not simulated) — see
+  `docs/specs/phase5-reproducible-baseline.md` and
+  `docs/adr/0004-phase5-monorepo-runtime-choice.md`. All stub logic is
+  explicitly marked as such in code comments; no real reasoning,
+  detection, or browser automation exists yet.
+- **Phases 6–8 complete — the privacy pipeline is real, tested, and is
+  the part of Ozer that survives the pivot unchanged** (it is
+  transport-agnostic pure logic):
+  - Phase 6: threat model (15 threats), privacy contract,
+    trust boundaries, `SanitizedContext` v1.1.0 with privacy metadata,
+    fail-closed `assertSafeForEgress()`, `sanitizeForLogging()`,
+    `validate_typed_action()`, and the adapter boundary that structurally
+    prevents raw screenshots reaching a downstream executor.
+  - Phase 7: Tier 1 deterministic DOM/pattern detection (password, OTP,
+    API key/token, email, phone, Luhn-validated card), redaction, and
+    `OzerPrivacyClient` as the single enforced egress path.
+  - Phase 8: Tier 2 semantic detection with additive confidence fusion,
+    the normalized `SensitiveRegion` contract every detector emits, and
+    an architecture test that scans `extension/src/` and fails on any
+    direct `fetch()` outside `ozerPrivacyClient.js`.
+  - Detection accuracy so far: 100% recall/precision on a **17-case
+    synthetic fixture set of our own construction** — a deterministic
+    self-check, *not* a real-world benchmark. Do not describe it as one.
+- **Tier 3 (local visual detection) not started.** WebBrain ships an
+  in-browser WebGPU VLM (`webbrain-one/webbrain-vl-2-450M-onnx`) that is
+  a reuse candidate — unverified whether it is invocable independently
+  of WebBrain's agent loop.
+- GitHub remote push access: VERIFIED as of this session (collaborator
+  access granted; local HEAD and `origin/main` independently confirmed
+  equal after every phase).
+
+## Current Privacy Verification Status
+
+**Real browser geometry. Real captured pixels. Extension integration
+pending.**
+
+Keep those three clauses together. They state, in order, exactly what
+has and has not been proven, and they are the guard against this claim
+being quietly upgraded in a later phase.
+
+Tier 1 and Tier 2 region geometry is verified against real
+browser-rendered geometry, including fractional DPR (`1.25`) and
+viewport-overflow cases.
+
+The verification uses real `getBoundingClientRect()` output **and a real
+browser screenshot**, captured in the *same* playwright session so the
+pixels and the geometry provably describe the same render. Redaction is
+applied to those real decoded pixels: the test asserts each sensitive
+field contained multiple distinct colours (rendered glyphs) beforehand
+and exactly one flat colour afterwards, while non-sensitive elements
+stay **byte-identical**.
+
+Ozer is still **not integrated into a loaded browser extension**, and
+the screenshot is produced by playwright rather than by the extension's
+own capture path. This is therefore evidence that the
+DOM-to-pixel-to-redaction boundary is correct on real rendered pixels
+for the tested cases — **not** a claim of full browser-extension
+end-to-end verification.
+
+On the project-authored fixture, Tier 1 and Tier 2 detected all 5
+intended sensitive fields with 0 observed false positives. **This is a
+deterministic integration check, not an independent benchmark** — the
+fixture was written by this project, so the number measures internal
+consistency, not real-world recall.
+
+**Phase 11 is BLOCKED pending a decision.** WebBrain v32.2.3 already
+ships a local screenshot redaction pipeline (all-frame content-script
+region collector, coordinate spaces, visibility filtering, pixel
+redaction, a separate `modelDataUrl`). A meaningful fraction of Ozer's
+Phases 7/9/10 duplicates it. Ozer's best-evidenced remaining gap is the
+**text/context path** — credentials reach the provider in conversation
+history with only a prompt-level mitigation — plus fail-closed egress
+enforcement. Options and evidence:
+`docs/research/webbrain-existing-redaction.md`, and the boundary audit
+`docs/research/phase11a-privacy-boundary-audit.md`.
+
+**Audit headline: WebBrain's screenshot redaction is OFF BY DEFAULT**
+(`agent.js:606`), and when enabled it is *more* rigorous than Ozer's —
+fail-closed, with a TOCTOU guard (refuses if the page mutates between
+region collection and capture) that Ozer's threat model lacks. So
+Ozer's opportunity is **policy, defaults, the text path, and
+independent verification** — not building a better redactor. The text
+path (element labels, AX tree, tool results, conversation history) is
+protected only by `_wrapUntrusted()`, a prompt-injection boundary, not
+a privacy control.
+
+Also established there: `_withImageDetail()` is **synchronous**, so it
+is the place to **assert** sanitisation, not to perform it. Redaction
+must happen at capture time, as WebBrain already does.
+
+### Phrases that would be false if written today
+
+Listed explicitly so nobody has to re-derive the boundary:
+
+- "end-to-end verified in the browser" — the extension integration does
+  not exist.
+- "end-to-end verified in the extension" — redaction is proven on a
+  real screenshot, but one captured by playwright, not by the
+  extension's own screenshot path.
+- "N% recall/precision" quoted without "on our own fixture".
+- "Tier 3 works" / "faces are redacted" — no face detector exists; the
+  demo images use hand-supplied boxes.
+- "blur is irreversible" — it is not; solid masking (the default) is
+  the only guarantee.
+
+Evidence for everything above: `docs/specs/phase10-region-production.md`,
+`extension/test/integration/realPagePipeline.test.js` (geometry), and
+`extension/test/integration/realScreenshotPipeline.test.js` (real
+pixels).
 
 ## Open questions (unresolved)
 
-- Which Graphify product/version, if any, is intended for cross-agent memory
-  (see `docs/research/` once investigated). Markdown + git remain authoritative
-  regardless of the answer.
-- Vendor vs. depend-on vs. fork vs. adapter decision for browser-use — not yet
-  made (Phase 4 of bootstrap sequence).
-- Target browsers confirmed as Chrome + Firefox; extension API differences not
-  yet investigated.
-- Local inference stack (WebGPU/WASM/ONNX Runtime Web/Transformers.js/model
-  choice) not yet evaluated against fixtures.
+- **Distribution licensing — the real blocker.** WebBrain 33.0.0+ is
+  GPL-3.0-or-later (pre-33.0.0 is MIT). Keeping Ozer a separate program
+  communicating over a network protocol is the shape most likely to
+  avoid derivative-work obligations, but that is a legal question, not
+  an engineering one, and is **unresolved**. Evaluating/prototyping
+  against GPL code differs materially from distributing a modified
+  combined extension. Ozer also has no `LICENSE` file of its own yet.
+- **How the local gate (primary protection) attaches to an unmodified
+  WebBrain.** ADR 0005 decided the gate is primary; the mechanism is not
+  yet designed, and if it requires modifying WebBrain it reopens the
+  licensing question above. This is the next real design question.
+- Whether `webbrain-one/webbrain-vl-2-450M-onnx` is invocable
+  independently of WebBrain's agent loop (Tier 3 reuse).
+- Proxy precondition: Ozer's OpenAI-compatible endpoint must advertise a
+  vision-matching model identity (or use WebBrain's `visionMode`
+  override), or WebBrain strips screenshots before they reach Ozer —
+  Tier 3 would silently have nothing to redact. Needs a test.
+- Target browsers confirmed as Chrome + Firefox; WebBrain's Firefox
+  source-level parity not yet verified.
+- Graphify has still never been run against this repo — test fixtures
+  contain synthetic secret-shaped strings that current
+  `.graphifyignore` filename patterns would not exclude. Deferred
+  deliberately since Phase 6.
 
 ## Source-of-truth order
 

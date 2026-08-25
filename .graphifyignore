@@ -1,0 +1,40 @@
+# .graphifyignore — required before the first `graphify extract`
+# Syntax: same as .gitignore (confirmed in docs/research/graphify.md
+# via the project's own README). Merges with .gitignore; only ever
+# excludes more, never re-includes.
+#
+# Per docs/adr/0002-graphify-as-index-not-source-of-truth.md: logs/ and
+# .scratch/ must never be indexed by default — logs/prompts/ especially
+# relies on human/agent redaction discipline, not a technical guarantee,
+# so it must never be blindly sent to a third-party LLM via graphify's
+# semantic extraction pass.
+
+logs/
+.scratch/
+
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# credential/secret-shaped files, defense in depth
+*credential*
+*secret*
+*token*
+
+node_modules/
+__pycache__/
+.git/
+
+# unsanitized visual/test artifacts (relevant once Ozer generates
+# browser fixtures/screenshots/recordings in later phases)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.mov
+downloads/
+recordings/
