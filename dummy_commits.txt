@@ -137,3 +137,4 @@ Commit 135: fix(browser): handle shadow DOM boundaries correctly #9098
 Commit 136: feat(orchestration): implement fallback mechanism for API timeouts #5070
 Commit 137: perf(client): lazy load heavy UI components #5243
 Commit 138: chore(arch): refactor component communication interfaces #6584
+Commit 139: fix(execution): prevent memory leak during long sessions #7859
