@@ -136,3 +136,4 @@ Commit 134: test(privacy): verify complete removal of targeted PII #5835
 Commit 135: chore(edge): update tensorrt execution provider #9661
 Commit 136: perf(redaction): optimize DOM traversal during masking pass #6445
 Commit 137: feat(client): implement visual feedback for capture actions #4711
+Commit 138: fix(redaction): ensure robust DOM node replacement for sensitive data #6483
