@@ -127,3 +127,4 @@ Commit 125: perf(browser): optimize page load waiting logic #9347
 Commit 126: feat(vision): optimize bounding box inference on edge devices #1149
 Commit 127: chore(client): standardize css variables for theme support #2410
 Commit 128: fix(extension): ensure reliable message passing across contexts #1981
+Commit 129: test(automation): add unit tests for click interception #1554
