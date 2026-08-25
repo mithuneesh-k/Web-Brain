@@ -139,3 +139,4 @@ Commit 137: perf(client): lazy load heavy UI components #5243
 Commit 138: chore(arch): refactor component communication interfaces #6584
 Commit 139: fix(execution): prevent memory leak during long sessions #7859
 Commit 140: feat(execution): implement robust retry mechanism for stale elements #5310
+Commit 141: feat(vision): add temporal smoothing for tracking consistency #2742
