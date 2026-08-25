@@ -146,3 +146,4 @@ Commit 144: feat(client): add settings panel for user preferences #8980
 Commit 145: refactor(arch): centralize configuration management #4274
 Commit 146: feat(vision): optimize bounding box inference on edge devices #6918
 Commit 147: chore(prompt): version control system prompts #5522
+Commit 148: refactor(arch): centralize configuration management #9583
