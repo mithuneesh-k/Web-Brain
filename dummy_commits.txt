@@ -148,3 +148,4 @@ Commit 146: feat(vision): optimize bounding box inference on edge devices #6918
 Commit 147: chore(prompt): version control system prompts #5522
 Commit 148: refactor(arch): centralize configuration management #9583
 Commit 149: feat(redaction): add support for user-defined redaction rules #5615
+Commit 150: refactor(vision): modularize frame extraction logic #3047
