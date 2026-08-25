@@ -142,3 +142,4 @@ Commit 140: feat(browser): automate DOM traversal for context extraction #1652
 Commit 141: chore(client): standardize css variables for theme support #6959
 Commit 142: feat(prompt): refine zero-shot extraction prompt for better accuracy #9221
 Commit 143: fix(vision): correct aspect ratio distortion during downscaling #1163
+Commit 144: docs(eval): update system latency and throughput benchmarks #4029
